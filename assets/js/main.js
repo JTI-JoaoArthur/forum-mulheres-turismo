@@ -1,11 +1,16 @@
 (function ($)
   { "use strict"
   
-/* 1. Proloder */
+/* 1. Proloder (removido) */
     $(window).on('load', function () {
-      $('#preloader-active').delay(450).fadeOut('slow');
-      $('body').delay(450).css({
-        'overflow': 'visible'
+      $('body').css({ 'overflow': 'visible' });
+
+      // Ocultar links sociais sem URL válida (palestrantes e footer)
+      document.querySelectorAll(".team-social a, .footer-social a").forEach(function(link) {
+        var href = link.getAttribute("href");
+        if (!href || href === "#" || href.trim() === "") {
+          link.style.display = "none";
+        }
       });
     });
 
