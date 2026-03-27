@@ -1,0 +1,102 @@
+/* ===================================
+   Fórum de Mulheres no Turismo
+   Ministério do Turismo | ONU Turismo
+   3 e 4 de Junho de 2026
+   Centro de Convenções de João Pessoa
+   =================================== */
+
+/* --- Header Fixo --- */
+.header-custom {
+    background-color: #ffffff !important;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1) !important;
+    padding: 0 30px !important;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 999;
+}
+
+.header-custom .logo img {
+    width: auto;
+    max-width: 100%;
+    max-height: 45px;
+    object-fit: contain;
+    vertical-align: middle;
+}
+
+.header-custom #navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+}
+
+.header-custom #navigation li {
+    list-style: none;
+    margin: 0 15px;
+}
+
+.header-custom #navigation li a {
+    color: #333333;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+}
+
+.header-custom #navigation li a:hover,
+.header-custom #navigation li a.active {
+    color: #5b32b4;
+}
+
+/* Compensação do header fixo */
+body {
+    padding-top: 80px;
+}
+
+/* --- Hero Swiper (index) --- */
+.swiper {
+    width: 100%;
+    height: calc(100vh - 80px);
+}
+
+.swiper-slide {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.hero-content {
+    z-index: 1;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 40px;
+    border-radius: 8px;
+}
+
+.hero-content h1 {
+    color: #ffffff;
+    margin-bottom: 10px;
+    font-size: 60px;
+    font-weight: bold;
+}
+
+.hero-content p {
+    color: #f1f1f1;
+    font-size: 24px;
+    margin-bottom: 0;
+}
