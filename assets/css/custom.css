@@ -33,6 +33,11 @@
     vertical-align: middle;
 }
 
+/* Logo esquerda (ONU Turismo) levemente menor */
+.header-custom .col-auto:first-child .logo img {
+    max-height: 38px;
+}
+
 .header-custom #navigation {
     display: flex;
     align-items: center;
