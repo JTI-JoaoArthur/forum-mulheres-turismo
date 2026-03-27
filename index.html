@@ -6,8 +6,6 @@
     <title>Fórum de Mulheres no Turismo — Ministério do Turismo | ONU Turismo</title>
     <meta name="description" content="Fórum de Mulheres no Turismo — 3 e 4 de Junho de 2026 — Centro de Convenções de João Pessoa. Uma realização do Ministério do Turismo e ONU Turismo.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
-
     <!-- CSS -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/owl.carousel.min.css">
@@ -31,7 +29,6 @@
             <div class="preloader-inner position-relative">
                 <div class="preloader-circle"></div>
                 <div class="preloader-img pere-text">
-                    <img src="assets/img/logo/loder.png" alt="">
                 </div>
             </div>
         </div>
@@ -81,11 +78,9 @@
             <div class="swiper-slide">
                 <img src="assets/img/hero/h1_hero.png" alt="Fórum de Mulheres no Turismo" class="hero-img">
                 <div class="hero-content">
-                    <h1>titulo</h1>
-                    <p>sub-titulo</p>
-                    <div id="contador" style="margin-top: 25px; font-size: 22px; font-weight: bold; background: rgba(0,0,0,0.4); padding: 15px 30px; border-radius: 5px;">
-                        Calculando tempo...
-                    </div>
+                    <h1 data-hero-title>titulo</h1>
+                    <p data-hero-subtitle>sub-titulo</p>
+                    <div id="contador" class="countdown-timer"></div>
                 </div>
             </div>
         </div>
@@ -446,12 +441,12 @@
                         <div class="row">
                             <div class="col-lg-4 col-md-4 col-sm-6">
                                 <div class="single-logo mb-30">
-                                    <img src="assets/img/gallery/cisco_brand.png" alt="Patrocinador">
+                                    <img src="assets/img/logo/ONU-Turismo.png" alt="ONU Turismo">
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-6">
                                 <div class="single-logo mb-30">
-                                    <img src="assets/img/gallery/cisco_brand2.png" alt="Patrocinador">
+                                    <img src="assets/img/logo/vertical-principal.png" alt="Ministério do Turismo">
                                 </div>
                             </div>
                         </div>
@@ -606,8 +601,23 @@
             disableOnInteraction: false,
         });
 
-        // Contador Regressivo
+        // Hero condicional: ocultar título/subtítulo se vazio
+        document.querySelectorAll("[data-hero-title], [data-hero-subtitle]").forEach(function(el) {
+            if (!el.textContent.trim()) {
+                el.style.display = "none";
+            }
+        });
+
+        // Cronômetro Regressivo
         var dataDoEvento = new Date("June 3, 2026 09:00:00").getTime();
+
+        function renderContador(m, d, h, s) {
+            return '<div class="countdown-item"><span class="countdown-number">' + m + '</span><span class="countdown-label">Meses</span></div>' +
+                   '<div class="countdown-item"><span class="countdown-number">' + d + '</span><span class="countdown-label">Dias</span></div>' +
+                   '<div class="countdown-item"><span class="countdown-number">' + h + '</span><span class="countdown-label">Horas</span></div>' +
+                   '<div class="countdown-item"><span class="countdown-number">' + s + '</span><span class="countdown-label">Seg</span></div>';
+        }
+
         var timerInterval = setInterval(function() {
             var agora = new Date().getTime();
             var distancia = dataDoEvento - agora;
@@ -616,16 +626,16 @@
 
             if (distancia < 0) {
                 clearInterval(timerInterval);
-                el.innerHTML = "O evento começou!";
+                el.innerHTML = renderContador(0, 0, 0, 0);
                 return;
             }
 
-            var meses = Math.floor(distancia / (1000 * 60 * 60 * 24 * 30));
-            var dias = Math.floor((distancia % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
+            var meses = Math.floor(distancia / (1000 * 60 * 60 * 24 * 30.44));
+            var dias = Math.floor((distancia % (1000 * 60 * 60 * 24 * 30.44)) / (1000 * 60 * 60 * 24));
             var horas = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             var segundos = Math.floor((distancia % (1000 * 60)) / 1000);
 
-            el.innerHTML = meses + "m " + dias + "d " + horas + "h " + segundos + "s ";
+            el.innerHTML = renderContador(meses, dias, horas, segundos);
         }, 1000);
     </script>
 </body>
