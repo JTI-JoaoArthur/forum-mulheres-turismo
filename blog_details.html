@@ -3,14 +3,21 @@
 <head>
    <meta charset="utf-8">
    <meta http-equiv="x-ua-compatible" content="ie=edge">
-   <title>Blog — Fórum de Mulheres no Turismo</title>
+   <title>Notícia — Fórum de Mulheres no Turismo</title>
    <meta name="description" content="Fórum de Mulheres no Turismo reúne lideranças femininas em João Pessoa — 3 e 4 de Junho de 2026.">
    <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <!-- Open Graph -->
+    <meta property="og:title" content="Notícia — Fórum de Mulheres no Turismo">
+    <meta property="og:description" content="Fórum de Mulheres no Turismo — lideranças femininas debatendo o futuro do turismo no Brasil.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="assets/img/hero/save-the-date-forum.jpg">
+    <meta property="og:locale" content="pt_BR">
 
    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
    <link rel="stylesheet" href="assets/css/owl.carousel.min.css">
    <link rel="stylesheet" href="assets/css/slicknav.css">
+   <link rel="stylesheet" href="assets/css/flaticon.css">
+   <link rel="stylesheet" href="assets/css/gijgo.css">
    <link rel="stylesheet" href="assets/css/animate.min.css">
    <link rel="stylesheet" href="assets/css/magnific-popup.css">
    <link rel="stylesheet" href="assets/css/fontawesome-all.min.css">
@@ -39,7 +46,7 @@
                                 <li><a href="about.html">Sobre o Evento</a></li>
                                 <li><a href="spakers.html">Palestrantes</a></li>
                                 <li><a href="schedule.html">Programação</a></li>
-                                <li><a href="blog.html">Blog</a></li>
+                                <li><a href="blog.html">Notícias</a></li>
                                 <li><a href="contact.html">Contato</a></li>
                             </ul>
                         </nav>
@@ -65,10 +72,10 @@
                   <div class="row">
                      <div class="col-xl-12">
                            <div class="hero-cap hero-cap2 text-center">
-                              <h2>Blog</h2>
+                              <h2>Notícia</h2>
                               <nav aria-label="breadcrumb">
                                  <ol class="breadcrumb justify-content-center" style="background:transparent;">
-                                    <li class="breadcrumb-item"><a href="blog.html" style="color:#fff;">Blog</a></li>
+                                    <li class="breadcrumb-item"><a href="blog.html" style="color:#fff;">Notícias</a></li>
                                     <li class="breadcrumb-item active" style="color:#ddd;">Detalhes</li>
                                  </ol>
                               </nav>
@@ -103,10 +110,13 @@
 
                   METADADOS:
                   - Data de publicação
-                  - Categorias (múltiplas)
                   - Destaque no carrossel: sim/não
                   - Mostrar no álbum: sim/não (padrão: SIM)
                     Imagens marcadas alimentam a seção álbum de fotos da home
+                  AÇÕES DO GESTOR:
+                  - Editar: alterar textos, mídias, destaque e álbum
+                  - Ocultar: manter notícia mas não exibir no site (visível: sim/não)
+                  - Excluir: remover permanentemente a notícia
                -->
                <div class="col-lg-8 posts-list">
                   <div class="single-post">
@@ -123,10 +133,6 @@
                      <div class="blog_details">
                         <h2 style="color: #2d2d2d;">Título da Notícia</h2>
                         <p class="excert"><em>Subtítulo ou resumo da notícia</em></p>
-                        <ul class="blog-info-link mt-3 mb-4">
-                           <li><a href="#"><i class="fa fa-user"></i> Categoria</a></li>
-                           <li><a href="#"><i class="fa fa-comments"></i> 0 Comentários</a></li>
-                        </ul>
 
                         <!-- Corpo do texto (rich text via TinyMCE no Plone) -->
                         <p>Conteúdo da notícia será inserido aqui pelo editor do CMS.</p>
@@ -154,179 +160,14 @@
                   </div>
                   <div class="navigation-top">
                      <div class="d-sm-flex justify-content-between text-center">
-                        <p class="like-info"><span class="align-middle"><i class="fa fa-heart"></i></span> 4 pessoas curtiram</p>
-                        <div class="col-sm-4 text-center my-2 my-sm-0">
-                           <!-- <p class="comment-count"><span class="align-middle"><i class="fa fa-comment"></i></span> 06 Comments</p> -->
-                        </div>
+                        <!-- Compartilhamento: URLs geradas dinamicamente pelo CMS -->
                         <ul class="social-icons">
-                           <li><a href="https://www.facebook.com/sai4ull"><i class="fab fa-facebook-f"></i></a></li>
-                           <li><a href="#"><i class="icon-x"></i></a></li>
-                           <li><a href="#"><i class="fab fa-dribbble"></i></a></li>
-                           <li><a href="#"><i class="fab fa-behance"></i></a></li>
+                           <li><a href="#" target="_blank" title="Compartilhar no Facebook"><i class="fab fa-facebook-f"></i></a></li>
+                           <li><a href="#" target="_blank" title="Compartilhar no X"><i class="icon-x"></i></a></li>
+                           <li><a href="#" target="_blank" title="Compartilhar no LinkedIn"><i class="fab fa-linkedin"></i></a></li>
+                           <li><a href="#" target="_blank" title="Compartilhar no WhatsApp"><i class="fab fa-whatsapp"></i></a></li>
                         </ul>
                      </div>
-                     <div class="navigation-area">
-                        <div class="row">
-                           <div
-                              class="col-lg-6 col-md-6 col-12 nav-left flex-row d-flex justify-content-start align-items-center">
-                              <div class="thumb">
-                                 <a href="#">
-                                    <img class="img-fluid" src="assets/img/post/preview.png" alt="">
-                                 </a>
-                              </div>
-                              <div class="arrow">
-                                 <a href="#">
-                                    <span class="lnr text-white ti-arrow-left"></span>
-                                 </a>
-                              </div>
-                              <div class="detials">
-                                 <p>Anterior</p>
-                                 <a href="#">
-                                    <h4 style="color: #2d2d2d;">Turismo sustentável no Nordeste</h4>
-                                 </a>
-                              </div>
-                           </div>
-                           <div
-                              class="col-lg-6 col-md-6 col-12 nav-right flex-row d-flex justify-content-end align-items-center">
-                              <div class="detials">
-                                 <p>Próximo</p>
-                                 <a href="#">
-                                    <h4 style="color: #2d2d2d;">Empreendedorismo feminino no turismo</h4>
-                                 </a>
-                              </div>
-                              <div class="arrow">
-                                 <a href="#">
-                                    <span class="lnr text-white ti-arrow-right"></span>
-                                 </a>
-                              </div>
-                              <div class="thumb">
-                                 <a href="#">
-                                    <img class="img-fluid" src="assets/img/post/next.png" alt="">
-                                 </a>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-                  <div class="blog-author">
-                     <div class="media align-items-center">
-                        <img src="assets/img/blog/author.png" alt="">
-                        <div class="media-body">
-                           <a href="#">
-                              <h4>Equipe ONU Turismo</h4>
-                           </a>
-                           <p>Conteúdo produzido pela equipe de comunicação do Fórum de Mulheres no Turismo, uma realização do Ministério do Turismo e da ONU Turismo.</p>
-                        </div>
-                     </div>
-                  </div>
-                  <div class="comments-area">
-                     <h4>05 Comentários</h4>
-                     <div class="comment-list">
-                        <div class="single-comment justify-content-between d-flex">
-                           <div class="user justify-content-between d-flex">
-                              <div class="thumb">
-                                 <img src="assets/img/comment/comment_1.png" alt="">
-                              </div>
-                              <div class="desc">
-                                 <p class="comment">
-                                    Muito interessante essa iniciativa do Ministério do Turismo e da ONU Turismo. O empoderamento feminino no setor turístico é fundamental para o desenvolvimento sustentável do país.
-                                 </p>
-                                 <div class="d-flex justify-content-between">
-                                    <div class="d-flex align-items-center">
-                                       <h5>
-                                          <a href="#">Visitante</a>
-                                       </h5>
-                                       <p class="date">15 de Março, 2026 às 15:12 </p>
-                                    </div>
-                                    <div class="reply-btn">
-                                       <a href="#" class="btn-reply text-uppercase">responder</a>
-                                    </div>
-                                 </div>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="comment-list">
-                        <div class="single-comment justify-content-between d-flex">
-                           <div class="user justify-content-between d-flex">
-                              <div class="thumb">
-                                 <img src="assets/img/comment/comment_2.png" alt="">
-                              </div>
-                              <div class="desc">
-                                 <p class="comment">
-                                    Muito interessante essa iniciativa do Ministério do Turismo e da ONU Turismo. O empoderamento feminino no setor turístico é fundamental para o desenvolvimento sustentável do país.
-                                 </p>
-                                 <div class="d-flex justify-content-between">
-                                    <div class="d-flex align-items-center">
-                                       <h5>
-                                          <a href="#">Visitante</a>
-                                       </h5>
-                                       <p class="date">15 de Março, 2026 às 15:12 </p>
-                                    </div>
-                                    <div class="reply-btn">
-                                       <a href="#" class="btn-reply text-uppercase">responder</a>
-                                    </div>
-                                 </div>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="comment-list">
-                        <div class="single-comment justify-content-between d-flex">
-                           <div class="user justify-content-between d-flex">
-                              <div class="thumb">
-                                 <img src="assets/img/comment/comment_3.png" alt="">
-                              </div>
-                              <div class="desc">
-                                 <p class="comment">
-                                    Muito interessante essa iniciativa do Ministério do Turismo e da ONU Turismo. O empoderamento feminino no setor turístico é fundamental para o desenvolvimento sustentável do país.
-                                 </p>
-                                 <div class="d-flex justify-content-between">
-                                    <div class="d-flex align-items-center">
-                                       <h5>
-                                          <a href="#">Visitante</a>
-                                       </h5>
-                                       <p class="date">15 de Março, 2026 às 15:12 </p>
-                                    </div>
-                                    <div class="reply-btn">
-                                       <a href="#" class="btn-reply text-uppercase">responder</a>
-                                    </div>
-                                 </div>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-                  <div class="comment-form">
-                     <h4>Deixe um Comentário</h4>
-                     <form class="form-contact comment_form" action="#" id="commentForm">
-                        <div class="row">
-                           <div class="col-12">
-                              <div class="form-group">
-                                 <textarea class="form-control w-100" name="comment" id="comment" cols="30" rows="9"
-                                    placeholder="Escreva seu comentário"></textarea>
-                              </div>
-                           </div>
-                           <div class="col-sm-6">
-                              <div class="form-group">
-                                 <input class="form-control" name="name" id="name" type="text" placeholder="Nome">
-                              </div>
-                           </div>
-                           <div class="col-sm-6">
-                              <div class="form-group">
-                                 <input class="form-control" name="email" id="email" type="email" placeholder="Email">
-                              </div>
-                           </div>
-                           <div class="col-12">
-                              <div class="form-group">
-                                 <input class="form-control" name="website" id="website" type="text" placeholder="Site">
-                              </div>
-                           </div>
-                        </div>
-                        <div class="form-group">
-                           <button type="submit" class="button button-contactForm btn_1 boxed-btn">Enviar Comentário</button>
-                        </div>
-                     </form>
                   </div>
                </div>
                <div class="col-lg-4">
@@ -346,160 +187,20 @@
                               type="submit">Buscar</button>
                         </form>
                      </aside>
-                     <aside class="single_sidebar_widget post_category_widget">
-                        <h4 class="widget_title" style="color: #2d2d2d;">Categorias</h4>
-                        <ul class="list cat-list">
-                           <li>
-                              <a href="#" class="d-flex">
-                                 <p>Turismo</p>
-                                 <p>(15)</p>
-                              </a>
-                           </li>
-                           <li>
-                              <a href="#" class="d-flex">
-                                 <p>Eventos</p>
-                                 <p>(10)</p>
-                              </a>
-                           </li>
-                           <li>
-                              <a href="#" class="d-flex">
-                                 <p>Igualdade de Gênero</p>
-                                 <p>(08)</p>
-                              </a>
-                           </li>
-                           <li>
-                              <a href="#" class="d-flex">
-                                 <p>Sustentabilidade</p>
-                                 <p>(06)</p>
-                              </a>
-                           </li>
-                           <li>
-                              <a href="#" class="d-flex">
-                                 <p>Políticas Públicas</p>
-                                 <p>(05)</p>
-                              </a>
-                           </li>
-                           <li>
-                              <a href="#" class="d-flex">
-                                 <p>Empreendedorismo Feminino</p>
-                                 <p>(04)</p>
-                              </a>
-                           </li>
-                        </ul>
-                     </aside>
-                     <aside class="single_sidebar_widget popular_post_widget">
-                        <h3 class="widget_title" style="color: #2d2d2d;">Publicações Recentes</h3>
-                        <div class="media post_item">
-                           <img src="assets/img/post/post_1.png" alt="post">
-                           <div class="media-body">
-                              <a href="blog_details.html">
-                                 <h3 style="color: #2d2d2d;">Liderança feminina no turismo</h3>
-                              </a>
-                              <p>15 de Março, 2026</p>
-                           </div>
-                        </div>
-                        <div class="media post_item">
-                           <img src="assets/img/post/post_2.png" alt="post">
-                           <div class="media-body">
-                              <a href="blog_details.html">
-                                 <h3 style="color: #2d2d2d;">Palestrantes confirmadas</h3>
-                              </a>
-                              <p>02 horas atrás</p>
-                           </div>
-                        </div>
-                        <div class="media post_item">
-                           <img src="assets/img/post/post_3.png" alt="post">
-                           <div class="media-body">
-                              <a href="blog_details.html">
-                                 <h3 style="color: #2d2d2d;">Turismo sustentável e gênero</h3>
-                              </a>
-                              <p>03 horas atrás</p>
-                           </div>
-                        </div>
-                        <div class="media post_item">
-                           <img src="assets/img/post/post_4.png" alt="post">
-                           <div class="media-body">
-                              <a href="blog_details.html">
-                                 <h3 style="color: #2d2d2d;">Novidades do Fórum 2026</h3>
-                              </a>
-                              <p>01 hora atrás</p>
-                           </div>
-                        </div>
-                     </aside>
-                     <aside class="single_sidebar_widget tag_cloud_widget">
-                        <h4 class="widget_title" style="color: #2d2d2d;">Tags</h4>
-                        <ul class="list">
-                           <li>
-                              <a href="#">turismo</a>
-                           </li>
-                           <li>
-                              <a href="#">mulheres</a>
-                           </li>
-                           <li>
-                              <a href="#">igualdade</a>
-                           </li>
-                           <li>
-                              <a href="#">evento</a>
-                           </li>
-                           <li>
-                              <a href="#">sustentabilidade</a>
-                           </li>
-                           <li>
-                              <a href="#">liderança</a>
-                           </li>
-                           <li>
-                              <a href="#">ONU Turismo</a>
-                           </li>
-                           <li>
-                              <a href="#">João Pessoa</a>
-                           </li>
-                        </ul>
-                     </aside>
+                     <!--
+                        INSTAGRAM (CMS):
+                        Feed automático via API Graph do Instagram/Facebook.
+                        Exibe as últimas 6 fotos do perfil @mturismo.
+                        Requer token de acesso configurado no servidor.
+                        Enquanto não integrado, exibe link direto para o perfil.
+                     -->
                      <aside class="single_sidebar_widget instagram_feeds">
                         <h4 class="widget_title" style="color: #2d2d2d;">Instagram</h4>
-                        <ul class="instagram_row flex-wrap">
-                           <li>
-                              <a href="#">
-                                 <img class="img-fluid" src="assets/img/post/post_5.png" alt="">
-                              </a>
-                           </li>
-                           <li>
-                              <a href="#">
-                                 <img class="img-fluid" src="assets/img/post/post_6.png" alt="">
-                              </a>
-                           </li>
-                           <li>
-                              <a href="#">
-                                 <img class="img-fluid" src="assets/img/post/post_7.png" alt="">
-                              </a>
-                           </li>
-                           <li>
-                              <a href="#">
-                                 <img class="img-fluid" src="assets/img/post/post_8.png" alt="">
-                              </a>
-                           </li>
-                           <li>
-                              <a href="#">
-                                 <img class="img-fluid" src="assets/img/post/post_9.png" alt="">
-                              </a>
-                           </li>
-                           <li>
-                              <a href="#">
-                                 <img class="img-fluid" src="assets/img/post/post_10.png" alt="">
-                              </a>
-                           </li>
-                        </ul>
-                     </aside>
-                     <aside class="single_sidebar_widget newsletter_widget">
-                        <h4 class="widget_title" style="color: #2d2d2d;">Newsletter</h4>
-                        <form action="#">
-                           <div class="form-group">
-                              <input type="email" class="form-control" onfocus="this.placeholder = ''"
-                                 onblur="this.placeholder = 'Digite seu e-mail'" placeholder='Digite seu e-mail' required>
-                           </div>
-                           <button class="button rounded-0 primary-bg text-white w-100 btn_1 boxed-btn"
-                              type="submit">Inscrever-se</button>
-                        </form>
+                        <p class="text-center mb-3">
+                           <a href="https://www.instagram.com/mturismo/" target="_blank" style="color: #64428c; font-weight: 600;">
+                              <i class="fab fa-instagram"></i> Siga @mturismo
+                           </a>
+                        </p>
                      </aside>
                   </div>
                </div>

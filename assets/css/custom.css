@@ -329,10 +329,45 @@ body {
 }
 
 /* --- Álbum de Fotos: transição em cascata --- */
+.album-popup {
+    display: block;
+    cursor: pointer;
+}
+
 .gallery-slot {
     transition: background-image 1s ease-in-out;
     background-size: cover;
     background-position: center;
+}
+
+/* Álbum mobile: grid 2x2 (4 fotos visíveis), restante oculto */
+@media (max-width: 575px) {
+    #album-fotos .row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    #album-fotos .row > div {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    /* Ocultar slots 5 e 6 no mobile pequeno */
+    #album-fotos .row > div:nth-child(n+5) {
+        display: none;
+    }
+    #album-fotos .gallery-img {
+        height: 140px;
+    }
+}
+
+/* Álbum tablet: grid 2x3 (todas visíveis, proporcionais) */
+@media (min-width: 576px) and (max-width: 767px) {
+    #album-fotos .row > div {
+        flex: 0 0 33.333%;
+        max-width: 33.333%;
+    }
+    #album-fotos .gallery-img {
+        height: 160px;
+    }
 }
 
 /* --- Blog: galeria e vídeos --- */
@@ -422,6 +457,16 @@ body {
 }
 
 /* --- Apoio e Realização: logos com fundo branco --- */
+.work-company .apoio-logos {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+
+.work-company .apoio-item {
+    display: flex;
+}
+
 .work-company .single-logo {
     background: #ffffff;
     padding: 20px 25px;
@@ -430,6 +475,7 @@ body {
     align-items: center;
     justify-content: center;
     min-height: 80px;
+    width: 100%;
 }
 
 .work-company .single-logo img {
@@ -473,4 +519,12 @@ body {
 .single-team .team-img img {
     object-fit: cover;
     width: 100%;
+}
+
+/* Palestrantes mobile: grid 3 colunas */
+@media (max-width: 575px) {
+    .team-area .row > .palestrante-item {
+        flex: 0 0 33.333%;
+        max-width: 33.333%;
+    }
 }

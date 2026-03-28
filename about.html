@@ -6,7 +6,12 @@
     <title>Sobre o Evento — Fórum de Mulheres no Turismo</title>
     <meta name="description" content="Saiba mais sobre o Fórum de Mulheres no Turismo, uma iniciativa do Ministério do Turismo e ONU Turismo em João Pessoa.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <!-- Open Graph -->
+    <meta property="og:title" content="Sobre o Evento — Fórum de Mulheres no Turismo">
+    <meta property="og:description" content="Conheça o Fórum de Mulheres no Turismo — uma iniciativa do Ministério do Turismo e ONU Turismo em João Pessoa.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/img/hero/save-the-date-forum.jpg">
+    <meta property="og:locale" content="pt_BR">
 
 <link rel="stylesheet" href="assets/css/bootstrap.min.css">
 	<link rel="stylesheet" href="assets/css/owl.carousel.min.css">
@@ -40,7 +45,7 @@
                                 <li><a href="about.html">Sobre o Evento</a></li>
                                 <li><a href="spakers.html">Palestrantes</a></li>
                                 <li><a href="schedule.html">Programação</a></li>
-                                <li><a href="blog.html">Blog</a></li>
+                                <li><a href="blog.html">Notícias</a></li>
                                 <li><a href="contact.html">Contato</a></li>
                             </ul>
                         </nav>
@@ -74,13 +79,29 @@
         </div>
     </div>
     <!-- Hero End -->
+    <!--
+        SOBRE O EVENTO (CMS):
+        Conteúdo único no CMS — reflete automaticamente aqui e na home (index.html).
+        O gestor edita uma única vez e ambas as páginas são atualizadas.
+
+        CAMPOS EDITÁVEIS:
+        - Título da seção: texto livre (ex: "Fórum de Mulheres no Turismo")
+        - Texto descritivo: rich text (parágrafos, listas, links, negrito, itálico)
+        - Imagens ilustrativas: 2 imagens (about1.png e about2.png)
+          Formato: .png/.jpg/.jpeg, máx 300 KB cada
+        - Local do evento: texto livre
+        - Data do evento: texto livre
+
+        AÇÕES DO GESTOR:
+        - Editar: alterar textos, imagens e informações (uma edição, duas páginas)
+        - Ocultar: manter página mas não exibir no menu (visível: sim/não)
+    -->
     <!-- Sobre o Evento -->
     <section class="about-low-area section-padding2">
         <div class="container">
             <div class="row">
                 <div class="col-lg-6 col-md-12">
                     <div class="about-caption mb-50">
-                        <!-- Section Tittle -->
                         <div class="section-tittle mb-35">
                             <h2>Fórum de Mulheres no Turismo</h2>
                         </div>
@@ -114,12 +135,11 @@
                     <a href="schedule.html" class="btn mt-50">Ver Programação</a>
                 </div>
                 <div class="col-lg-6 col-md-12">
-                    <!-- about-img -->
-                    <div class="about-img ">
+                    <div class="about-img">
                         <div class="about-font-img d-none d-lg-block">
                             <img src="assets/img/gallery/about2.png" alt="">
                         </div>
-                        <div class="about-back-img ">
+                        <div class="about-back-img">
                             <img src="assets/img/gallery/about1.png" alt="">
                         </div>
                     </div>
@@ -127,49 +147,61 @@
             </div>
         </div>
     </section>
-    <!-- Galeria -->
-    <div class="gallery-area fix">
+    <!-- Galeria (mesma fonte do álbum de fotos da home) -->
+    <div class="gallery-area fix" id="album-fotos">
         <div class="container-fluid p-0">
             <div class="row no-gutters">
                 <div class="col-lg-3 col-md-3 col-sm-6">
                     <div class="gallery-box">
                         <div class="single-gallery">
-                            <div class="gallery-img " style="background-image: url(assets/img/gallery/gallery1.png);"></div>
+                            <a href="assets/img/gallery/gallery1.png" class="album-popup">
+                                <div class="gallery-img gallery-slot" data-slot="0" style="background-image: url(assets/img/gallery/gallery1.png);"></div>
+                            </a>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-6">
                     <div class="gallery-box">
                         <div class="single-gallery">
-                            <div class="gallery-img " style="background-image: url(assets/img/gallery/gallery2.png);"></div>
+                            <a href="assets/img/gallery/gallery2.png" class="album-popup">
+                                <div class="gallery-img gallery-slot" data-slot="1" style="background-image: url(assets/img/gallery/gallery2.png);"></div>
+                            </a>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-6">
                     <div class="gallery-box">
                         <div class="single-gallery">
-                            <div class="gallery-img " style="background-image: url(assets/img/gallery/gallery3.png);"></div>
+                            <a href="assets/img/gallery/gallery3.png" class="album-popup">
+                                <div class="gallery-img gallery-slot" data-slot="2" style="background-image: url(assets/img/gallery/gallery3.png);"></div>
+                            </a>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-6">
                     <div class="gallery-box">
                         <div class="single-gallery">
-                            <div class="gallery-img " style="background-image: url(assets/img/gallery/gallery4.png);"></div>
+                            <a href="assets/img/gallery/gallery4.png" class="album-popup">
+                                <div class="gallery-img gallery-slot" data-slot="3" style="background-image: url(assets/img/gallery/gallery4.png);"></div>
+                            </a>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-6">
                     <div class="gallery-box">
                         <div class="single-gallery">
-                             <div class="gallery-img " style="background-image: url(assets/img/gallery/gallery5.png);"></div>
+                            <a href="assets/img/gallery/gallery5.png" class="album-popup">
+                                <div class="gallery-img gallery-slot" data-slot="4" style="background-image: url(assets/img/gallery/gallery5.png);"></div>
+                            </a>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-6">
                     <div class="gallery-box">
                         <div class="single-gallery">
-                            <div class="gallery-img " style="background-image: url(assets/img/gallery/gallery6.png);"></div>
+                            <a href="assets/img/gallery/gallery6.png" class="album-popup">
+                                <div class="gallery-img gallery-slot" data-slot="5" style="background-image: url(assets/img/gallery/gallery6.png);"></div>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -278,6 +310,56 @@
     <script src="./assets/js/jquery.ajaxchimp.min.js"></script>
     <script src="./assets/js/plugins.js"></script>
     <script src="./assets/js/main.js"></script>
-    
+    <script>
+        // Álbum de Fotos: rotação em cascata (mesma config da home)
+        var albumFotos = [
+            'assets/img/gallery/gallery1.png',
+            'assets/img/gallery/gallery2.png',
+            'assets/img/gallery/gallery3.png',
+            'assets/img/gallery/gallery4.png',
+            'assets/img/gallery/gallery5.png',
+            'assets/img/gallery/gallery6.png'
+        ];
+
+        (function initAlbumSequencial() {
+            var slots = document.querySelectorAll('.gallery-slot');
+            if (!slots.length || albumFotos.length < 2) return;
+
+            var INTERVALO = 3000;
+            var slotAtual = 0;
+            var indices = [];
+            for (var i = 0; i < slots.length; i++) {
+                indices.push(i % albumFotos.length);
+            }
+
+            function trocarProximo() {
+                indices[slotAtual] = (indices[slotAtual] + 1) % albumFotos.length;
+                var novaImg = albumFotos[indices[slotAtual]];
+                slots[slotAtual].style.backgroundImage = 'url(' + novaImg + ')';
+                var link = slots[slotAtual].closest('.album-popup');
+                if (link) link.setAttribute('href', novaImg);
+                slotAtual = (slotAtual + 1) % slots.length;
+            }
+
+            setInterval(trocarProximo, INTERVALO);
+        })();
+
+        // Magnific Popup para o álbum
+        $(document).ready(function() {
+            $('.album-popup').magnificPopup({
+                type: 'image',
+                gallery: {
+                    enabled: true,
+                    tCounter: '%curr% de %total%'
+                },
+                image: {
+                    titleSrc: function(item) {
+                        return 'Álbum de Fotos — Fórum de Mulheres no Turismo';
+                    }
+                }
+            });
+        });
+    </script>
+
     </body>
 </html>

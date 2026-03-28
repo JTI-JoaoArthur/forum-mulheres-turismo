@@ -6,7 +6,12 @@
     <title>Palestrantes — Fórum de Mulheres no Turismo</title>
     <meta name="description" content="Conheça as palestrantes confirmadas para o Fórum de Mulheres no Turismo — 3 e 4 de Junho de 2026.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <!-- Open Graph -->
+    <meta property="og:title" content="Palestrantes — Fórum de Mulheres no Turismo">
+    <meta property="og:description" content="Conheça as lideranças femininas confirmadas para o Fórum de Mulheres no Turismo — 3 e 4 de Junho de 2026.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/img/hero/save-the-date-forum.jpg">
+    <meta property="og:locale" content="pt_BR">
 
 <link rel="stylesheet" href="assets/css/bootstrap.min.css">
 	<link rel="stylesheet" href="assets/css/owl.carousel.min.css">
@@ -40,7 +45,7 @@
                                 <li><a href="about.html">Sobre o Evento</a></li>
                                 <li><a href="spakers.html">Palestrantes</a></li>
                                 <li><a href="schedule.html">Programação</a></li>
-                                <li><a href="blog.html">Blog</a></li>
+                                <li><a href="blog.html">Notícias</a></li>
                                 <li><a href="contact.html">Contato</a></li>
                             </ul>
                         </nav>
@@ -89,13 +94,20 @@
                 <!-- Palestrantes: itens CMS serão inseridos aqui -->
                 <!-- O item default abaixo será ocultado quando houver palestrantes reais -->
                 <!--
-                    MODELO DE PALESTRANTE (copiar para adicionar):
+                    MODELO DE PALESTRANTE (CMS):
                     - Foto: .png/.jpg/.jpeg, máx 300 KB
                     - Nome: texto livre (exibido em caixa alta via CSS)
                     - Cargo/Instituição: texto livre (capitalizado via CSS)
                     - Redes sociais: preencher href ou remover o <li>
+                    - Ordem de exibição: número inteiro (quanto menor, mais à frente no grid)
+                      Permite ao gestor destacar palestrantes prioritários
+                      Ex: 1 = primeira posição, 10 = posição secundária
+                    AÇÕES DO GESTOR:
+                    - Editar: alterar foto, nome, cargo, redes sociais e ordem
+                    - Ocultar: manter cadastro mas não exibir no site (visível: sim/não)
+                    - Excluir: remover permanentemente o palestrante
                 -->
-                <div class="col-lg-3 col-md-4 col-sm-6 palestrante-item palestrante-default">
+                <div class="col-lg-4 col-md-4 col-sm-4 palestrante-item palestrante-default">
                     <div class="single-team mb-30">
                         <div class="team-img">
                             <img src="assets/img/gallery/team1.png" alt="Palestrante">

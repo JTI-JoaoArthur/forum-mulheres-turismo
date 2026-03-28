@@ -3,24 +3,29 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Blog — Fórum de Mulheres no Turismo</title>
+    <title>Notícias — Fórum de Mulheres no Turismo</title>
     <meta name="description" content="Notícias e artigos sobre o Fórum de Mulheres no Turismo — turismo, igualdade de gênero e sustentabilidade.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <!-- Open Graph -->
+    <meta property="og:title" content="Notícias — Fórum de Mulheres no Turismo">
+    <meta property="og:description" content="Acompanhe as últimas notícias sobre o Fórum de Mulheres no Turismo — turismo, igualdade de gênero e empoderamento feminino.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/img/hero/save-the-date-forum.jpg">
+    <meta property="og:locale" content="pt_BR">
 
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/owl.carousel.min.css">
     <link rel="stylesheet" href="assets/css/slicknav.css">
+    <link rel="stylesheet" href="assets/css/flaticon.css">
+    <link rel="stylesheet" href="assets/css/gijgo.css">
     <link rel="stylesheet" href="assets/css/animate.min.css">
     <link rel="stylesheet" href="assets/css/magnific-popup.css">
     <link rel="stylesheet" href="assets/css/fontawesome-all.min.css">
-    <link rel="stylesheet" href="assets/css/themify-icons.css">
     <link rel="stylesheet" href="assets/css/themify-icons.css">
     <link rel="stylesheet" href="assets/css/slick.css">
     <link rel="stylesheet" href="assets/css/nice-select.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/custom.css">
-    <link rel="stylesheet" href="assets/css/responsive.css">
 </head>
 <body>
 <header>
@@ -40,7 +45,7 @@
                                 <li><a href="about.html">Sobre o Evento</a></li>
                                 <li><a href="spakers.html">Palestrantes</a></li>
                                 <li><a href="schedule.html">Programação</a></li>
-                                <li><a href="blog.html">Blog</a></li>
+                                <li><a href="blog.html">Notícias</a></li>
                                 <li><a href="contact.html">Contato</a></li>
                             </ul>
                         </nav>
@@ -66,7 +71,7 @@
                     <div class="row">
                         <div class="col-xl-12">
                             <div class="hero-cap hero-cap2 text-center">
-                                <h2>Blog</h2>
+                                <h2>Notícias</h2>
                             </div>
                         </div>
                     </div>
@@ -83,7 +88,6 @@
                                 MODELO DE NOTÍCIA (CMS):
                                 - Imagem: .png/.jpg/.jpeg, máx 300 KB
                                 - Data: dia + mês abreviado
-                                - Categoria e contagem de comentários
                                 - Título + resumo do texto
                                 - Link: URL da notícia completa
                                 MÍDIA PRINCIPAL:
@@ -97,6 +101,10 @@
                                 ÁLBUM:
                                 - Mostrar no álbum do site: sim/não (padrão: SIM)
                                   Imagens marcadas alimentam o álbum de fotos da home
+                                AÇÕES DO GESTOR:
+                                - Editar: alterar textos, mídias, destaque e álbum
+                                - Ocultar: manter notícia mas não exibir no site (visível: sim/não)
+                                - Excluir: remover permanentemente a notícia
                             -->
                             <!-- O artigo default abaixo será ocultado quando houver notícias reais -->
                             <article class="blog_item blog-item blog-default">
@@ -112,10 +120,6 @@
                                         <h2 class="blog-head" style="color: #2d2d2d;">Título da Notícia</h2>
                                     </a>
                                     <p>Resumo da notícia será exibido aqui quando o conteúdo for cadastrado no CMS.</p>
-                                    <ul class="blog-info-link">
-                                        <li><a href="#"><i class="fa fa-user"></i> Categoria</a></li>
-                                        <li><a href="#"><i class="fa fa-comments"></i> 0 Comentários</a></li>
-                                    </ul>
                                 </div>
                             </article>
                             <nav class="blog-pagination justify-content-center d-flex">
@@ -155,161 +159,20 @@
                                         type="submit">Buscar</button>
                                 </form>
                             </aside>
-                            <aside class="single_sidebar_widget post_category_widget">
-                                <h4 class="widget_title" style="color: #2d2d2d;">Categorias</h4>
-                                <ul class="list cat-list">
-                                    <li>
-                                        <a href="#" class="d-flex">
-                                            <p>Turismo</p>
-                                            <p>(15)</p>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="d-flex">
-                                            <p>Eventos</p>
-                                            <p>(10)</p>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="d-flex">
-                                            <p>Igualdade de Genero</p>
-                                            <p>(08)</p>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="d-flex">
-                                            <p>Sustentabilidade</p>
-                                            <p>(06)</p>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="d-flex">
-                                            <p>Politicas Publicas</p>
-                                            <p>(05)</p>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="d-flex">
-                                            <p>Empreendedorismo Feminino</p>
-                                            <p>(04)</p>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </aside>
-                            <aside class="single_sidebar_widget popular_post_widget">
-                                <h3 class="widget_title" style="color: #2d2d2d;">Publicacoes Recentes</h3>
-                                <div class="media post_item">
-                                    <img src="assets/img/post/post_1.png" alt="post">
-                                    <div class="media-body">
-                                        <a href="blog_details.html">
-                                            <h3 style="color: #2d2d2d;">Lideranca feminina no turismo</h3>
-                                        </a>
-                                        <p>15 de Marco, 2026</p>
-                                    </div>
-                                </div>
-                                <div class="media post_item">
-                                    <img src="assets/img/post/post_2.png" alt="post">
-                                    <div class="media-body">
-                                        <a href="blog_details.html">
-                                            <h3 style="color: #2d2d2d;">Palestrantes confirmadas</h3>
-                                        </a>
-                                        <p>02 horas atras</p>
-                                    </div>
-                                </div>
-                                <div class="media post_item">
-                                    <img src="assets/img/post/post_3.png" alt="post">
-                                    <div class="media-body">
-                                        <a href="blog_details.html">
-                                            <h3 style="color: #2d2d2d;">Turismo sustentavel e genero</h3>
-                                        </a>
-                                        <p>03 horas atras</p>
-                                    </div>
-                                </div>
-                                <div class="media post_item">
-                                    <img src="assets/img/post/post_4.png" alt="post">
-                                    <div class="media-body">
-                                        <a href="blog_details.html">
-                                            <h3 style="color: #2d2d2d;">Novidades do Forum 2026</h3>
-                                        </a>
-                                        <p>01 hora atras</p>
-                                    </div>
-                                </div>
-                            </aside>
-                            <aside class="single_sidebar_widget tag_cloud_widget">
-                                <h4 class="widget_title" style="color: #2d2d2d;">Tags</h4>
-                                <ul class="list">
-                                    <li>
-                                        <a href="#">turismo</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">mulheres</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">igualdade</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">evento</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">sustentabilidade</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">lideranca</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">ONU Turismo</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Joao Pessoa</a>
-                                    </li>
-                                </ul>
-                            </aside>
-
+                            <!--
+                                INSTAGRAM (CMS):
+                                Feed automático via API Graph do Instagram/Facebook.
+                                Exibe as últimas 6 fotos do perfil @mturismo.
+                                Requer token de acesso configurado no servidor.
+                                Enquanto não integrado, exibe link direto para o perfil.
+                            -->
                             <aside class="single_sidebar_widget instagram_feeds">
                                 <h4 class="widget_title" style="color: #2d2d2d;">Instagram</h4>
-                                <ul class="instagram_row flex-wrap">
-                                    <li>
-                                        <a href="#">
-                                            <img class="img-fluid" src="assets/img/post/post_5.png" alt="">
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <img class="img-fluid" src="assets/img/post/post_6.png" alt="">
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <img class="img-fluid" src="assets/img/post/post_7.png" alt="">
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <img class="img-fluid" src="assets/img/post/post_8.png" alt="">
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <img class="img-fluid" src="assets/img/post/post_9.png" alt="">
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <img class="img-fluid" src="assets/img/post/post_10.png" alt="">
-                                        </a>
-                                    </li>
-                                </ul>
-                            </aside>
-                            <aside class="single_sidebar_widget newsletter_widget">
-                                <h4 class="widget_title" style="color: #2d2d2d;">Newsletter</h4>
-                                <form action="#">
-                                    <div class="form-group">
-                                        <input type="email" class="form-control" onfocus="this.placeholder = ''"
-                                            onblur="this.placeholder = 'Digite seu e-mail'" placeholder='Digite seu e-mail' required>
-                                    </div>
-                                    <button class="button rounded-0 primary-bg text-white w-100 btn_1 boxed-btn"
-                                        type="submit">Inscrever-se</button>
-                                </form>
+                                <p class="text-center mb-3">
+                                    <a href="https://www.instagram.com/mturismo/" target="_blank" style="color: #64428c; font-weight: 600;">
+                                        <i class="fab fa-instagram"></i> Siga @mturismo
+                                    </a>
+                                </p>
                             </aside>
                         </div>
                     </div>
