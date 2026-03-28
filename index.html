@@ -204,54 +204,35 @@
             </div>
         </div>
         <div class="container">
+            <!--
+                MODELO DE ATIVIDADE DA PROGRAMAÇÃO (CMS):
+                - Nome: texto livre (máx 80 caracteres)
+                - Local: texto livre (máx 60 caracteres) — sala, auditório, etc.
+                - Horário: início - fim (ex: 09:00 - 10:30)
+                - Data: qual dia do evento (Dia 1 ou Dia 2)
+                - Descrição: breve resumo (máx 200 caracteres)
+            -->
             <div class="tab-content" id="nav-tabContent">
+                <!-- Dia 1 — 3 de Junho -->
                 <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                    <div class="row">
                         <div class="col-lg-11">
                             <div class="accordion-wrapper">
                                 <div class="accordion" id="accordionDay1">
-                                    <div class="card">
-                                        <div class="card-header" id="headingOne">
+                                    <!-- Item default: será ocultado quando houver atividades reais -->
+                                    <div class="card programacao-item programacao-default">
+                                        <div class="card-header" id="headingDefault1">
                                             <h2 class="mb-0">
-                                                <a href="#" class="btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                                    <span>08:30 - 09:30</span>
-                                                    <p>Credenciamento e Welcome Coffee</p>
+                                                <a href="#" class="btn-link" data-toggle="collapse" data-target="#collapseDefault1" aria-expanded="true" aria-controls="collapseDefault1">
+                                                    <span>00:00 - 00:00</span>
+                                                    <p>Nome da Atividade</p>
                                                 </a>
                                             </h2>
                                         </div>
-                                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionDay1">
+                                        <div id="collapseDefault1" class="collapse show" aria-labelledby="headingDefault1" data-parent="#accordionDay1">
                                             <div class="card-body">
-                                                Recepção dos participantes e credenciamento no Centro de Convenções de João Pessoa.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card">
-                                        <div class="card-header" id="headingTwo">
-                                            <h2 class="mb-0">
-                                                <a href="#" class="btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                                    <span>09:30 - 12:00</span>
-                                                    <p>Cerimônia de Abertura e Painel Principal</p>
-                                                </a>
-                                            </h2>
-                                        </div>
-                                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionDay1">
-                                            <div class="card-body">
-                                                Abertura oficial com representantes do Ministério do Turismo e da ONU Turismo, seguida do painel principal sobre o papel da mulher no turismo.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card">
-                                        <div class="card-header" id="headingThree">
-                                            <h2 class="mb-0">
-                                                <a href="#" class="btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                                    <span>14:00 - 18:00</span>
-                                                    <p>Painéis Temáticos e Workshops</p>
-                                                </a>
-                                            </h2>
-                                        </div>
-                                        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionDay1">
-                                            <div class="card-body">
-                                                Painéis temáticos sobre empreendedorismo feminino, sustentabilidade e inovação no turismo. Workshops práticos em salas simultâneas.
+                                                <strong>Local:</strong> A definir<br>
+                                                Descrição da atividade será inserida aqui pelo CMS.
                                             </div>
                                         </div>
                                     </div>
@@ -260,38 +241,26 @@
                         </div>
                    </div>
                 </div>
+                <!-- Dia 2 — 4 de Junho -->
                 <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                    <div class="row">
                         <div class="col-lg-11">
                             <div class="accordion-wrapper">
                                 <div class="accordion" id="accordionDay2">
-                                    <div class="card">
-                                        <div class="card-header" id="headingFour">
+                                    <!-- Item default: será ocultado quando houver atividades reais -->
+                                    <div class="card programacao-item programacao-default">
+                                        <div class="card-header" id="headingDefault2">
                                             <h2 class="mb-0">
-                                                <a href="#" class="btn-link" data-toggle="collapse" data-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
-                                                    <span>09:00 - 12:00</span>
-                                                    <p>Painéis e Mesas-Redondas</p>
+                                                <a href="#" class="btn-link" data-toggle="collapse" data-target="#collapseDefault2" aria-expanded="true" aria-controls="collapseDefault2">
+                                                    <span>00:00 - 00:00</span>
+                                                    <p>Nome da Atividade</p>
                                                 </a>
                                             </h2>
                                         </div>
-                                        <div id="collapseFour" class="collapse show" aria-labelledby="headingFour" data-parent="#accordionDay2">
+                                        <div id="collapseDefault2" class="collapse show" aria-labelledby="headingDefault2" data-parent="#accordionDay2">
                                             <div class="card-body">
-                                                Continuação dos debates com mesas-redondas sobre políticas públicas e inclusão no setor turístico.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card">
-                                        <div class="card-header" id="headingFive">
-                                            <h2 class="mb-0">
-                                                <a href="#" class="btn-link collapsed" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                                                    <span>14:00 - 17:00</span>
-                                                    <p>Encerramento e Carta de Compromisso</p>
-                                                </a>
-                                            </h2>
-                                        </div>
-                                        <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionDay2">
-                                            <div class="card-body">
-                                                Sessão de encerramento com a leitura da Carta de Compromisso e cerimônia de encerramento oficial.
+                                                <strong>Local:</strong> A definir<br>
+                                                Descrição da atividade será inserida aqui pelo CMS.
                                             </div>
                                         </div>
                                     </div>
