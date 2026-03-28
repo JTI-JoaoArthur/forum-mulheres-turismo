@@ -50,7 +50,7 @@
                         <a href="index.html"><img src="assets/img/logo/vertical-principal.png" alt="Ministério do Turismo"></a>
                     </div>
                 </div>
-                <div class="col-12 d-block d-lg-none mt-2">
+                <div class="col-auto d-block d-lg-none mobile-menu-col">
                     <div class="mobile_menu"></div>
                 </div>
             </div>
@@ -82,34 +82,72 @@
       <section class="blog_area single-post-area section-padding">
          <div class="container">
             <div class="row">
+               <!--
+                  MODELO DE NOTÍCIA/BLOG DETALHADO (CMS):
+
+                  MÍDIA PRINCIPAL (vai para o carrossel se destaque=true):
+                  - Imagem: 1920×1080 ou qualquer 16:9, .png/.jpg/.jpeg, máx 300 KB
+                  - OU Vídeo: upload .mp4 (máx 10 MB) ou link do YouTube
+                  - Apenas 1 mídia principal por notícia
+
+                  MÍDIAS ADICIONAIS (galeria no corpo da notícia):
+                  - Imagens: 16:9 recomendado, .png/.jpg/.jpeg, máx 300 KB cada
+                  - Vídeos: upload .mp4 ou link do YouTube
+                  - Exibidas em galeria Magnific Popup no corpo do texto
+
+                  TEXTOS:
+                  - Título: texto livre
+                  - Subtítulo: texto livre (resumo/lead)
+                  - Corpo: rich text (TinyMCE nativo do Plone)
+                    Suporta: parágrafos, citações, listas, links, imagens e vídeos inline
+
+                  METADADOS:
+                  - Data de publicação
+                  - Categorias (múltiplas)
+                  - Destaque no carrossel: sim/não
+               -->
                <div class="col-lg-8 posts-list">
                   <div class="single-post">
+                     <!-- Mídia principal: imagem ou vídeo -->
                      <div class="feature-img">
+                        <!-- Se imagem: -->
                         <img class="img-fluid" src="assets/img/blog/single_blog_1.png" alt="">
+                        <!-- Se vídeo YouTube (substituir imagem acima):
+                        <div class="embed-responsive embed-responsive-16by9">
+                           <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/VIDEO_ID" allowfullscreen></iframe>
+                        </div>
+                        -->
                      </div>
                      <div class="blog_details">
-                        <h2 style="color: #2d2d2d;">Fórum de Mulheres no Turismo reúne lideranças femininas em João Pessoa</h2>
+                        <h2 style="color: #2d2d2d;">Título da Notícia</h2>
+                        <p class="excert"><em>Subtítulo ou resumo da notícia</em></p>
                         <ul class="blog-info-link mt-3 mb-4">
-                           <li><a href="#"><i class="fa fa-user"></i> Turismo, Eventos</a></li>
-                           <li><a href="#"><i class="fa fa-comments"></i> 03 Comentários</a></li>
+                           <li><a href="#"><i class="fa fa-user"></i> Categoria</a></li>
+                           <li><a href="#"><i class="fa fa-comments"></i> 0 Comentários</a></li>
                         </ul>
-                        <p class="excert">
-                           Nos dias 3 e 4 de junho de 2026, o Centro de Convenções de João Pessoa será palco do Fórum de Mulheres no Turismo, uma iniciativa conjunta do Ministério do Turismo e da ONU Turismo. O evento, de acesso gratuito, tem como objetivo fortalecer a presença e a liderança feminina no setor turístico brasileiro e internacional.
-                        </p>
-                        <p>
-                           O fórum reunirá gestoras públicas, empresárias, pesquisadoras e profissionais do turismo de todo o Brasil e de diversos países para debater temas como equidade de gênero, empreendedorismo feminino, políticas públicas de inclusão e o papel da mulher na construção de um turismo mais sustentável e responsável.
-                        </p>
-                        <div class="quote-wrapper">
-                           <div class="quotes">
-                              "O Fórum de Mulheres no Turismo representa um marco na promoção da igualdade de gênero no setor. Queremos dar visibilidade às mulheres que transformam o turismo todos os dias e criar uma rede de colaboração que impulsione mudanças reais em todo o país."
+
+                        <!-- Corpo do texto (rich text via TinyMCE no Plone) -->
+                        <p>Conteúdo da notícia será inserido aqui pelo editor do CMS.</p>
+
+                        <!-- Galeria de mídias adicionais (Magnific Popup) -->
+                        <div class="blog-gallery mt-4 mb-4">
+                           <div class="row">
+                              <!-- Imagem adicional (repetir conforme necessário) -->
+                              <div class="col-md-6 mb-3">
+                                 <a href="assets/img/blog/single_blog_1.png" class="popup-gallery" title="Descrição da imagem">
+                                    <img class="img-fluid rounded" src="assets/img/blog/single_blog_1.png" alt="Descrição da imagem">
+                                 </a>
+                              </div>
+                              <!-- Vídeo YouTube adicional (repetir conforme necessário) -->
+                              <div class="col-md-6 mb-3">
+                                 <a href="https://www.youtube.com/watch?v=VIDEO_ID" class="popup-video" title="Descrição do vídeo">
+                                    <img class="img-fluid rounded" src="assets/img/blog/single_blog_1.png" alt="Thumbnail do vídeo">
+                                    <div class="video-play-overlay"><i class="fas fa-play-circle"></i></div>
+                                 </a>
+                              </div>
                            </div>
                         </div>
-                        <p>
-                           A programação inclui painéis temáticos, mesas-redondas, oficinas práticas e sessões de networking. Entre os destaques estão palestras sobre liderança feminina no turismo sustentável, cases de sucesso de empreendedoras no Nordeste e estratégias para ampliar a participação de mulheres em cargos de decisão no setor.
-                        </p>
-                        <p>
-                           João Pessoa foi escolhida como sede por ser um dos destinos turísticos mais promissores do Brasil, com forte vocação para o turismo de sol e praia, cultural e de eventos. O evento é totalmente gratuito e aberto ao público, reforçando o compromisso com a democratização do acesso ao conhecimento e à formação profissional no turismo.
-                        </p>
+
                      </div>
                   </div>
                   <div class="navigation-top">
@@ -564,6 +602,28 @@
    <script src="./assets/js/jquery.ajaxchimp.min.js"></script>
    <script src="./assets/js/plugins.js"></script>
    <script src="./assets/js/main.js"></script>
+   <script>
+      // Galeria de imagens (Magnific Popup)
+      $('.popup-gallery').magnificPopup({
+         type: 'image',
+         gallery: { enabled: true },
+         zoom: { enabled: true, duration: 300 }
+      });
+
+      // Vídeos YouTube/mp4 (Magnific Popup)
+      $('.popup-video').magnificPopup({
+         type: 'iframe',
+         iframe: {
+            patterns: {
+               youtube: {
+                  index: 'youtube.com/',
+                  id: 'v=',
+                  src: 'https://www.youtube.com/embed/%id%?autoplay=1'
+               }
+            }
+         }
+      });
+   </script>
 
    </body>
 </html>

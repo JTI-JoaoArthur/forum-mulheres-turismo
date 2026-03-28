@@ -51,7 +51,7 @@
                             <a href="index.html"><img src="assets/img/logo/vertical-principal.png" alt="Ministério do Turismo"></a>
                         </div>
                     </div>
-                    <div class="col-12 d-block d-lg-none mt-2">
+                    <div class="col-auto d-block d-lg-none mobile-menu-col">
                         <div class="mobile_menu"></div>
                     </div>
                 </div>
@@ -60,20 +60,31 @@
     </header>
 
     <main>
-    <!-- Hero Carrossel -->
-    <div class="swiper mySwiper">
+    <!--
+        HERO PRINCIPAL (fixo, permanente)
+        Imagem institucional do evento. Não faz parte da rotação do carrossel.
+        O cronômetro regressivo aparece apenas aqui.
+    -->
+    <div class="hero-principal">
+        <img src="assets/img/hero/save-the-date-forum.jpg" alt="Save the Date — Fórum de Mulheres no Turismo" class="hero-img">
+        <div class="hero-content hero-content--no-title">
+            <div id="contador" class="countdown-timer"></div>
+        </div>
+    </div>
+
+    <!--
+        CARROSSEL DE DESTAQUES (CMS)
+        Slides gerados automaticamente a partir de notícias com destaque=true.
+        Conforme novas notícias chegam, as mais antigas saem da fila.
+        Sem notícias em destaque, o carrossel não é exibido.
+    -->
+    <div class="swiper mySwiper" id="carrossel-destaques">
         <div class="swiper-wrapper">
-            <div class="swiper-slide">
-                <img src="assets/img/hero/h1_hero.png" alt="Fórum de Mulheres no Turismo" class="hero-img">
-                <div class="hero-content">
-                    <h1 data-hero-title>titulo</h1>
-                    <p data-hero-subtitle>sub-titulo</p>
-                    <div id="contador" class="countdown-timer"></div>
-                </div>
-            </div>
+            <!-- Slides CMS: inseridos automaticamente via tal:repeat -->
         </div>
         <div class="swiper-button-next" style="color: #fff;"></div>
         <div class="swiper-button-prev" style="color: #fff;"></div>
+        <div class="swiper-pagination"></div>
     </div>
 
     <!-- Sobre o Evento -->
@@ -139,94 +150,23 @@
                         <a href="spakers.html" class="btn white-btn mt-30">Ver Todos</a>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
+                <!-- Palestrantes: itens CMS serão inseridos aqui -->
+                <!-- O item default abaixo será ocultado quando houver palestrantes reais -->
+                <!--
+                    MODELO DE PALESTRANTE (copiar para adicionar):
+                    - Foto: .png/.jpg/.jpeg, máx 300 KB
+                    - Nome: texto livre (exibido em caixa alta via CSS)
+                    - Cargo/Instituição: texto livre (capitalizado via CSS)
+                    - Redes sociais: preencher href ou remover o <li>
+                -->
+                <div class="col-lg-3 col-md-4 col-sm-6 palestrante-item palestrante-default">
                     <div class="single-team mb-30">
                         <div class="team-img">
-                            <img src="assets/img/gallery/team1.png" alt="">
+                            <img src="assets/img/gallery/team1.png" alt="Palestrante">
                             <ul class="team-social">
-                                <li><a href="https://www.linkedin.com/in/exemplo" target="_blank"><i class="fab fa-linkedin"></i></a></li>
-                                <li><a href="https://www.instagram.com/exemplo" target="_blank"><i class="fab fa-instagram"></i></a></li>
-                                <li><a href="https://www.exemplo.com" target="_blank"><i class="fas fa-globe"></i></a></li>
-                            </ul>
-                        </div>
-                        <div class="team-caption">
-                            <h3><a href="#">Nome da Palestrante</a></h3>
-                            <p>Cargo / Instituição</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="single-team mb-30">
-                        <div class="team-img">
-                            <img src="assets/img/gallery/team2.png" alt="">
-                            <ul class="team-social">
-                                <li><a href="https://www.linkedin.com/in/exemplo2" target="_blank"><i class="fab fa-linkedin"></i></a></li>
-                                <li><a href="#"><i class="fab fa-instagram"></i></a></li>
-                                <li><a href="#"><i class="fas fa-globe"></i></a></li>
-                            </ul>
-                        </div>
-                        <div class="team-caption">
-                            <h3><a href="#">Nome da Palestrante</a></h3>
-                            <p>Cargo / Instituição</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="single-team mb-30">
-                        <div class="team-img">
-                            <img src="assets/img/gallery/team3.png" alt="">
-                            <ul class="team-social">
-                                <li><a href="#"><i class="fab fa-linkedin"></i></a></li>
-                                <li><a href="https://www.instagram.com/exemplo3" target="_blank"><i class="fab fa-instagram"></i></a></li>
-                                <li><a href="https://www.exemplo3.com" target="_blank"><i class="fas fa-globe"></i></a></li>
-                            </ul>
-                        </div>
-                        <div class="team-caption">
-                            <h3><a href="#">Nome da Palestrante</a></h3>
-                            <p>Cargo / Instituição</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="single-team mb-30">
-                        <div class="team-img">
-                            <img src="assets/img/gallery/team4.png" alt="">
-                            <ul class="team-social">
-                                <li><a href="https://www.linkedin.com/in/exemplo4" target="_blank"><i class="fab fa-linkedin"></i></a></li>
-                                <li><a href="https://www.instagram.com/exemplo4" target="_blank"><i class="fab fa-instagram"></i></a></li>
-                                <li><a href="#"><i class="fas fa-globe"></i></a></li>
-                            </ul>
-                        </div>
-                        <div class="team-caption">
-                            <h3><a href="#">Nome da Palestrante</a></h3>
-                            <p>Cargo / Instituição</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="single-team mb-30">
-                        <div class="team-img">
-                            <img src="assets/img/gallery/team5.png" alt="">
-                            <ul class="team-social">
-                                <li><a href="#"><i class="fab fa-linkedin"></i></a></li>
-                                <li><a href="#"><i class="fab fa-instagram"></i></a></li>
-                                <li><a href="https://www.exemplo5.com" target="_blank"><i class="fas fa-globe"></i></a></li>
-                            </ul>
-                        </div>
-                        <div class="team-caption">
-                            <h3><a href="#">Nome da Palestrante</a></h3>
-                            <p>Cargo / Instituição</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="single-team mb-30">
-                        <div class="team-img">
-                            <img src="assets/img/gallery/team6.png" alt="">
-                            <ul class="team-social">
-                                <li><a href="https://www.linkedin.com/in/exemplo6" target="_blank"><i class="fab fa-linkedin"></i></a></li>
-                                <li><a href="https://www.instagram.com/exemplo6" target="_blank"><i class="fab fa-instagram"></i></a></li>
-                                <li><a href="https://www.exemplo6.com" target="_blank"><i class="fas fa-globe"></i></a></li>
+                                <li data-social="linkedin"><a href="#"><i class="fab fa-linkedin"></i></a></li>
+                                <li data-social="instagram"><a href="#"><i class="fab fa-instagram"></i></a></li>
+                                <li data-social="site"><a href="#"><i class="fas fa-globe"></i></a></li>
                             </ul>
                         </div>
                         <div class="team-caption">
@@ -455,21 +395,37 @@
                     </div>
                 </div>
             </div>
+            <!--
+                MODELO DE NOTÍCIA (CMS):
+                MÍDIA PRINCIPAL:
+                - Imagem: 1920×1080 ou 16:9, .png/.jpg/.jpeg, máx 300 KB
+                - OU Vídeo: .mp4 (máx 10 MB) ou link do YouTube
+                TEXTOS:
+                - Título, subtítulo (lead), corpo (rich text / TinyMCE)
+                - Data de publicação, categorias
+                MÍDIAS ADICIONAIS:
+                - Imagens e vídeos extras vão para a galeria no corpo (Magnific Popup)
+                DESTAQUE:
+                - Destaque no carrossel: sim/não (data-destaque="true")
+                  Se "true", a mídia principal gera um slide no carrossel
+                  de destaques com link para a matéria via data-href
+            -->
             <div class="row">
-                <div class="col-xl-6 col-lg-6 col-md-6">
+                <!-- O item default abaixo será ocultado quando houver notícias reais -->
+                <div class="col-xl-6 col-lg-6 col-md-6 blog-item blog-default">
                     <div class="home-blog-single mb-30">
                         <div class="blog-img-cap">
                             <div class="blog-img">
                                 <img src="assets/img/gallery/home-blog1.png" alt="">
                                 <div class="blog-date text-center">
-                                    <span>03</span>
-                                    <p>Jun</p>
+                                    <span>00</span>
+                                    <p>Mês</p>
                                 </div>
                             </div>
                             <div class="blog-cap">
-                                <p>| Turismo</p>
-                                <h3><a href="blog_details.html">Fórum reunirá lideranças femininas do turismo em João Pessoa</a></h3>
-                                <a href="blog_details.html" class="more-btn">Leia mais »</a>
+                                <p>| Categoria</p>
+                                <h3><a href="#">Título da Notícia</a></h3>
+                                <a href="#" class="more-btn">Leia mais »</a>
                             </div>
                         </div>
                     </div>
@@ -584,21 +540,50 @@
     <script src="./assets/js/main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
-        // Carrossel Swiper
-        var swiper = new Swiper(".mySwiper", {
-            slidesPerView: 1,
-            watchOverflow: true,
-            navigation: {
-                nextEl: ".swiper-button-next",
-                prevEl: ".swiper-button-prev",
-            },
-            disableOnInteraction: false,
-        });
+        // Carrossel de Destaques: só inicializa se houver slides
+        var carrosselEl = document.querySelector("#carrossel-destaques");
+        var slides = carrosselEl ? carrosselEl.querySelectorAll(".swiper-slide") : [];
+        if (slides.length > 0) {
+            var swiper = new Swiper("#carrossel-destaques", {
+                slidesPerView: 1,
+                watchOverflow: true,
+                loop: slides.length > 1,
+                autoplay: {
+                    delay: 7000,
+                    disableOnInteraction: false,
+                },
+                navigation: {
+                    nextEl: "#carrossel-destaques .swiper-button-next",
+                    prevEl: "#carrossel-destaques .swiper-button-prev",
+                },
+                pagination: {
+                    el: "#carrossel-destaques .swiper-pagination",
+                    clickable: true,
+                },
+            });
 
-        // Hero condicional: ocultar título/subtítulo se vazio
-        document.querySelectorAll("[data-hero-title], [data-hero-subtitle]").forEach(function(el) {
-            if (!el.textContent.trim()) {
-                el.style.display = "none";
+            // Slides clicáveis: redireciona se data-href estiver preenchido
+            slides.forEach(function(slide) {
+                var url = slide.getAttribute("data-href");
+                if (url) {
+                    slide.style.cursor = "pointer";
+                    slide.addEventListener("click", function(e) {
+                        if (!e.target.closest(".swiper-button-next, .swiper-button-prev")) {
+                            window.location.href = url;
+                        }
+                    });
+                }
+            });
+        } else {
+            // Ocultar carrossel vazio
+            if (carrosselEl) carrosselEl.style.display = "none";
+        }
+
+        // Ocultar ícones sociais sem link preenchido
+        document.querySelectorAll(".team-social li[data-social]").forEach(function(li) {
+            var link = li.querySelector("a");
+            if (!link || !link.getAttribute("href") || link.getAttribute("href") === "#") {
+                li.style.display = "none";
             }
         });
 
