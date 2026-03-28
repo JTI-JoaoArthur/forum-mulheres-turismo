@@ -273,49 +273,58 @@
         </div>
     </section>
 
-    <!-- Galeria -->
-    <div class="gallery-area fix">
+    <!--
+        ÁLBUM DE FOTOS (CMS):
+        Recebe imagens de duas fontes:
+        1. Imagens de blogs/notícias com "mostrar no álbum" marcado (padrão: marcado)
+        2. Imagens enviadas diretamente para o álbum (sem vínculo a notícia)
+
+        - Formato: .png/.jpg/.jpeg, 16:9 recomendado, máx 300 KB
+        - As imagens trocam em cascata a cada 4 segundos (fade individual por slot)
+        - Layout: 6 slots fixos (grid 3+3+6+6+3+3), imagens rotacionam dentro de cada slot
+    -->
+    <div class="gallery-area fix" id="album-fotos">
         <div class="container-fluid p-0">
             <div class="row no-gutters">
                 <div class="col-lg-3 col-md-3 col-sm-6">
                     <div class="gallery-box">
                         <div class="single-gallery">
-                            <div class="gallery-img" style="background-image: url(assets/img/gallery/gallery1.png);"></div>
+                            <div class="gallery-img gallery-slot" data-slot="0" style="background-image: url(assets/img/gallery/gallery1.png);"></div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-6">
                     <div class="gallery-box">
                         <div class="single-gallery">
-                            <div class="gallery-img" style="background-image: url(assets/img/gallery/gallery2.png);"></div>
+                            <div class="gallery-img gallery-slot" data-slot="1" style="background-image: url(assets/img/gallery/gallery2.png);"></div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-6">
                     <div class="gallery-box">
                         <div class="single-gallery">
-                            <div class="gallery-img" style="background-image: url(assets/img/gallery/gallery3.png);"></div>
+                            <div class="gallery-img gallery-slot" data-slot="2" style="background-image: url(assets/img/gallery/gallery3.png);"></div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-6">
                     <div class="gallery-box">
                         <div class="single-gallery">
-                            <div class="gallery-img" style="background-image: url(assets/img/gallery/gallery4.png);"></div>
+                            <div class="gallery-img gallery-slot" data-slot="3" style="background-image: url(assets/img/gallery/gallery4.png);"></div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-6">
                     <div class="gallery-box">
                         <div class="single-gallery">
-                            <div class="gallery-img" style="background-image: url(assets/img/gallery/gallery5.png);"></div>
+                            <div class="gallery-img gallery-slot" data-slot="4" style="background-image: url(assets/img/gallery/gallery5.png);"></div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-6">
                     <div class="gallery-box">
                         <div class="single-gallery">
-                            <div class="gallery-img" style="background-image: url(assets/img/gallery/gallery6.png);"></div>
+                            <div class="gallery-img gallery-slot" data-slot="5" style="background-image: url(assets/img/gallery/gallery6.png);"></div>
                         </div>
                     </div>
                 </div>
@@ -378,6 +387,10 @@
                 - Destaque no carrossel: sim/não (data-destaque="true")
                   Se "true", a mídia principal gera um slide no carrossel
                   de destaques com link para a matéria via data-href
+                ÁLBUM:
+                - Mostrar no álbum do site: sim/não (padrão: SIM)
+                  Imagens marcadas alimentam a seção álbum de fotos da home
+                  O gestor desmarca manualmente se não quiser exibir no álbum
             -->
             <div class="row">
                 <!-- O item default abaixo será ocultado quando houver notícias reais -->
@@ -585,6 +598,45 @@
 
             el.innerHTML = renderContador(meses, dias, horas, segundos);
         }, 1000);
+
+        // Álbum de Fotos: rotação em cascata
+        // No CMS, este array será preenchido dinamicamente com as imagens marcadas para o álbum
+        var albumFotos = [
+            'assets/img/gallery/gallery1.png',
+            'assets/img/gallery/gallery2.png',
+            'assets/img/gallery/gallery3.png',
+            'assets/img/gallery/gallery4.png',
+            'assets/img/gallery/gallery5.png',
+            'assets/img/gallery/gallery6.png'
+        ];
+
+        (function initAlbumCascata() {
+            var slots = document.querySelectorAll('.gallery-slot');
+            if (!slots.length || albumFotos.length < 2) return;
+
+            var INTERVALO = 4000;   // troca a cada 4 segundos
+            var CASCATA = 800;      // 800ms de atraso entre cada slot
+
+            // Cada slot mantém seu próprio índice de imagem
+            var indices = [];
+            for (var i = 0; i < slots.length; i++) {
+                indices.push(i % albumFotos.length);
+            }
+
+            function trocarSlot(slotIndex) {
+                indices[slotIndex] = (indices[slotIndex] + 1) % albumFotos.length;
+                slots[slotIndex].style.backgroundImage = 'url(' + albumFotos[indices[slotIndex]] + ')';
+            }
+
+            // Iniciar cascata: cada slot troca com atraso progressivo
+            setInterval(function() {
+                slots.forEach(function(slot, i) {
+                    setTimeout(function() {
+                        trocarSlot(i);
+                    }, i * CASCATA);
+                });
+            }, INTERVALO);
+        })();
 
     </script>
 </body>

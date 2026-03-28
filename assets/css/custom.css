@@ -328,6 +328,13 @@ body {
     margin-top: calc(56.25vw * 0.01);
 }
 
+/* --- Álbum de Fotos: transição em cascata --- */
+.gallery-slot {
+    transition: background-image 1s ease-in-out;
+    background-size: cover;
+    background-position: center;
+}
+
 /* --- Blog: galeria e vídeos --- */
 .blog-gallery .col-md-6 {
     position: relative;
