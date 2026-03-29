@@ -1,0 +1,21 @@
+# Bloquear acesso direto a diretórios internos
+<FilesMatch "\.(sqlite|sql)$">
+    Require all denied
+</FilesMatch>
+
+# Proteger lib/ e sql/ e data/
+RedirectMatch 403 ^/admin/lib/.*$
+RedirectMatch 403 ^/admin/sql/.*$
+RedirectMatch 403 ^/admin/data/.*$
+RedirectMatch 403 ^/admin/templates/.*$
+
+# Impedir listagem de diretórios
+Options -Indexes
+
+# Headers de segurança
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "DENY"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
