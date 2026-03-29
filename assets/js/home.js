@@ -1,1 +1,104 @@
-var carrosselEl=document.querySelector("#carrossel-destaques"),slides=carrosselEl?carrosselEl.querySelectorAll(".swiper-slide"):[];if(slides.length>0){var swiper=new Swiper("#carrossel-destaques",{slidesPerView:1,watchOverflow:!0,loop:slides.length>1,autoplay:{delay:7e3,disableOnInteraction:!1},navigation:{nextEl:"#carrossel-destaques .swiper-button-next",prevEl:"#carrossel-destaques .swiper-button-prev"},pagination:{el:"#carrossel-destaques .swiper-pagination",clickable:!0}});slides.forEach(function(e){var a=e.getAttribute("data-href");a&&(e.style.cursor="pointer",e.addEventListener("click",function(e){e.target.closest(".swiper-button-next, .swiper-button-prev")||(window.location.href=a)}))})}else carrosselEl&&(carrosselEl.style.display="none");document.querySelectorAll(".team-social li[data-social]").forEach(function(e){var a=e.querySelector("a");a&&a.getAttribute("href")&&"#"!==a.getAttribute("href")||(e.style.display="none")});var dataDoEvento=new Date("June 3, 2026 09:00:00").getTime();function renderContador(e,a,t,s){return'<div class="countdown-item"><span class="countdown-number">'+e+'</span><span class="countdown-label">Meses</span></div><div class="countdown-item"><span class="countdown-number">'+a+'</span><span class="countdown-label">Dias</span></div><div class="countdown-item"><span class="countdown-number">'+t+'</span><span class="countdown-label">Horas</span></div><div class="countdown-item"><span class="countdown-number">'+s+'</span><span class="countdown-label">Seg</span></div>'}var timerInterval=setInterval(function(){var e=(new Date).getTime(),a=dataDoEvento-e,t=document.getElementById("contador");if(t){if(a<0)return clearInterval(timerInterval),void(t.style.display="none");var s=Math.floor(a/2630016e3),n=Math.floor(a%2630016e3/864e5),l=Math.floor(a%864e5/36e5),r=Math.floor(a%6e4/1e3);t.innerHTML=renderContador(s,n,l,r)}},1e3),albumFotos=["assets/img/galeria/gallery1.png","assets/img/galeria/gallery2.png","assets/img/galeria/gallery3.png","assets/img/galeria/gallery4.png","assets/img/galeria/gallery5.png","assets/img/galeria/gallery6.png"];!function(){var e=document.querySelectorAll(".gallery-slot");if(e.length&&!(albumFotos.length<2)){for(var a=0,t=[],s=0;s<e.length;s++)t.push(s%albumFotos.length);setInterval(function(){t[a]=(t[a]+1)%albumFotos.length;var s=albumFotos[t[a]];e[a].style.backgroundImage="url("+s+")";var n=e[a].closest(".album-popup");n&&n.setAttribute("href",s),a=(a+1)%e.length},3e3)}}(),$(document).ready(function(){$(".album-popup").magnificPopup({type:"image",gallery:{enabled:!0,tCounter:"%curr% de %total%"},image:{titleSrc:function(e){return"Álbum de Fotos — Fórum de Mulheres no Turismo"}}})});
+/* home.js — Carrossel, Countdown, Álbum, Social (Fórum de Mulheres no Turismo) */
+
+// ── Carrossel (Swiper) ──────────────────────────────────────────────
+var carrosselEl = document.querySelector("#carrossel-destaques"),
+    slides = carrosselEl ? carrosselEl.querySelectorAll(".swiper-slide") : [];
+
+if (slides.length > 0) {
+    var swiper = new Swiper("#carrossel-destaques", {
+        slidesPerView: 1,
+        watchOverflow: true,
+        loop: slides.length > 1,
+        autoplay: { delay: 7000, disableOnInteraction: false },
+        navigation: {
+            nextEl: "#carrossel-destaques .swiper-button-next",
+            prevEl: "#carrossel-destaques .swiper-button-prev"
+        },
+        pagination: { el: "#carrossel-destaques .swiper-pagination", clickable: true }
+    });
+    slides.forEach(function(e) {
+        var a = e.getAttribute("data-href");
+        if (a) {
+            e.style.cursor = "pointer";
+            e.addEventListener("click", function(ev) {
+                if (!ev.target.closest(".swiper-button-next, .swiper-button-prev")) {
+                    window.location.href = a;
+                }
+            });
+        }
+    });
+} else if (carrosselEl) {
+    carrosselEl.style.display = "none";
+}
+
+// ── Ocultar ícones sociais sem link ─────────────────────────────────
+document.querySelectorAll(".team-social li[data-social]").forEach(function(li) {
+    var link = li.querySelector("a");
+    if (!link || !link.getAttribute("href") || link.getAttribute("href") === "#") {
+        li.style.display = "none";
+    }
+});
+
+// ── Countdown ───────────────────────────────────────────────────────
+// Usa global `dataDoEvento` injetado pelo PHP; fallback hardcoded.
+if (typeof dataDoEvento === "undefined") {
+    var dataDoEvento = new Date("June 3, 2026 09:00:00").getTime();
+}
+
+function renderContador(m, d, h, s) {
+    return '<div class="countdown-item"><span class="countdown-number">' + m +
+        '</span><span class="countdown-label">Meses</span></div>' +
+        '<div class="countdown-item"><span class="countdown-number">' + d +
+        '</span><span class="countdown-label">Dias</span></div>' +
+        '<div class="countdown-item"><span class="countdown-number">' + h +
+        '</span><span class="countdown-label">Horas</span></div>' +
+        '<div class="countdown-item"><span class="countdown-number">' + s +
+        '</span><span class="countdown-label">Seg</span></div>';
+}
+
+var timerInterval = setInterval(function() {
+    var now = (new Date()).getTime();
+    var diff = dataDoEvento - now;
+    var el = document.getElementById("contador");
+    if (!el) return;
+    if (diff < 0) { clearInterval(timerInterval); el.style.display = "none"; return; }
+    var meses = Math.floor(diff / 2630016000);
+    var dias  = Math.floor((diff % 2630016000) / 86400000);
+    var horas = Math.floor((diff % 86400000) / 3600000);
+    var segs  = Math.floor((diff % 60000) / 1000);
+    el.innerHTML = renderContador(meses, dias, horas, segs);
+}, 1000);
+
+// ── Álbum de Fotos: rotação em cascata ──────────────────────────────
+// Usa global `albumFotos` injetado pelo PHP; fallback hardcoded.
+if (typeof albumFotos === "undefined") {
+    var albumFotos = [
+        "assets/img/galeria/gallery1.png", "assets/img/galeria/gallery2.png",
+        "assets/img/galeria/gallery3.png", "assets/img/galeria/gallery4.png",
+        "assets/img/galeria/gallery5.png", "assets/img/galeria/gallery6.png"
+    ];
+}
+
+(function initAlbumSequencial() {
+    var slots = document.querySelectorAll(".gallery-slot");
+    if (!slots.length || albumFotos.length < 2) return;
+    var slotAtual = 0, indices = [];
+    for (var i = 0; i < slots.length; i++) indices.push(i % albumFotos.length);
+    setInterval(function() {
+        indices[slotAtual] = (indices[slotAtual] + 1) % albumFotos.length;
+        var novaImg = albumFotos[indices[slotAtual]];
+        slots[slotAtual].style.backgroundImage = "url(" + novaImg + ")";
+        var link = slots[slotAtual].closest(".album-popup");
+        if (link) link.setAttribute("href", novaImg);
+        slotAtual = (slotAtual + 1) % slots.length;
+    }, 3000);
+})();
+
+// ── Magnific Popup para álbum ───────────────────────────────────────
+$(document).ready(function() {
+    $(".album-popup").magnificPopup({
+        type: "image",
+        gallery: { enabled: true, tCounter: "%curr% de %total%" },
+        image: { titleSrc: function() { return "Álbum de Fotos — Fórum de Mulheres no Turismo"; } }
+    });
+});

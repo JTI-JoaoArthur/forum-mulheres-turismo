@@ -7,14 +7,22 @@
  */
 
 // ── Configuração (CMS) ──────────────────────────────────────────────
-// E-MAIL DESTINATÁRIO: quem recebe as mensagens do formulário de contato.
-// Alterar para o e-mail definitivo da gestão.
+// Tenta ler do banco; se indisponível, usa valores padrão.
 $to = "default@turismo.gov.br";
-
-// E-MAIL REMETENTE: aparece como "De:" no e-mail recebido pela gestão.
-// Deve ser um endereço do próprio domínio, configurado no servidor de e-mail.
-// O visitante nunca vê este endereço — ele serve apenas para o envio funcionar.
 $from_address = "noreply@turismo.gov.br";
+
+try {
+    require_once __DIR__ . '/admin/lib/Database.php';
+    $dbPath = __DIR__ . '/admin/data/cms.sqlite';
+    if (file_exists($dbPath)) {
+        $recipient = Database::getSetting('form_recipient');
+        $sender    = Database::getSetting('form_sender');
+        if ($recipient) $to = $recipient;
+        if ($sender) $from_address = $sender;
+    }
+} catch (Exception $e) {
+    // Mantém defaults
+}
 
 // ── Apenas POST ─────────────────────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

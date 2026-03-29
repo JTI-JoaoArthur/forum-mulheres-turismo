@@ -1,0 +1,24 @@
+# Banco de dados (contém senhas hashed e dados do CMS)
+admin/data/
+
+# Arquivos de sistema
+.DS_Store
+*.DS_Store
+Thumbs.db
+
+# Ambiente e configuração sensível
+.env
+.env.*
+*.log
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.Spotlight-V100
+.Trashes
+__MACOSX

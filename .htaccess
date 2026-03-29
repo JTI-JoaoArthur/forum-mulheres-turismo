@@ -1,0 +1,29 @@
+# Redirecionar .html para .php (compatibilidade com links antigos)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # index.html → index.php
+    RewriteRule ^index\.html$ index.php [L,R=301]
+
+    # pagina.html → pagina.php
+    RewriteRule ^(sobre|palestrantes|programacao|noticias|noticia|contato)\.html$ $1.php [L,R=301]
+</IfModule>
+
+# Impedir listagem de diretórios
+Options -Indexes
+
+# Bloquear acesso a arquivos sensíveis
+<FilesMatch "\.(sqlite|sql|log)$">
+    Require all denied
+</FilesMatch>
+
+# Proteger diretórios internos
+RedirectMatch 403 ^/includes/.*$
+
+# Headers de segurança
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

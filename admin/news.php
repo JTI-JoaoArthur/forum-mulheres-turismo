@@ -46,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'slug'         => generateSlug($title),
             'summary'      => trim($_POST['summary'] ?? ''),
             'body'         => trim($_POST['body'] ?? ''),
+            'author'       => trim($_POST['author'] ?? ''),
             'published_at' => trim($_POST['published_at'] ?? date('Y-m-d')),
             'is_featured'  => isset($_POST['is_featured']) ? 1 : 0,
             'is_in_gallery' => isset($_POST['is_in_gallery']) ? 1 : 0,
@@ -210,6 +211,13 @@ if ($action === 'form'):
                             <textarea class="form-control" id="summary" name="summary" rows="2"
                                       required minlength="10" maxlength="300"><?= htmlspecialchars($news['summary'] ?? '') ?></textarea>
                             <small class="form-text text-muted">Aparece na listagem de notícias. Máx. 300 caracteres.</small>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="author">Autor <small class="text-muted">(opcional)</small></label>
+                            <input type="text" class="form-control" id="author" name="author"
+                                   value="<?= htmlspecialchars($news['author'] ?? '') ?>" maxlength="100"
+                                   placeholder="Ex.: Assessoria de Comunicação">
+                            <small class="form-text text-muted">Se preenchido, será exibido na notícia. Caso contrário, ficará oculto.</small>
                         </div>
                         <div class="form-group mb-3">
                             <label for="body">Conteúdo</label>

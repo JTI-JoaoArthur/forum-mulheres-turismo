@@ -37,6 +37,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    // Conta precisa definir senha no primeiro acesso
+    if (!empty($result['needs_password'])) {
+        $needsPassword = true;
+    }
+
     $error = $result['message'];
 }
 ?>
@@ -59,7 +64,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p class="text-center text-muted mb-4">Fórum de Mulheres no Turismo</p>
 
                 <?php if ($error): ?>
-                    <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+                    <div class="alert alert-danger">
+                        <?= htmlspecialchars($error) ?>
+                        <?php if (!empty($needsPassword)): ?>
+                            <br><a href="/admin/set-password.php" class="alert-link">Definir senha</a>
+                        <?php endif; ?>
+                    </div>
                 <?php endif; ?>
 
                 <form method="post" autocomplete="off">

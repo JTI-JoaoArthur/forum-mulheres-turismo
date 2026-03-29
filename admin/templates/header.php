@@ -28,6 +28,9 @@
                 <li class="nav-item"><a class="nav-link" href="/admin/gallery.php">Galeria</a></li>
                 <li class="nav-item"><a class="nav-link" href="/admin/sponsors.php">Apoio</a></li>
                 <li class="nav-item"><a class="nav-link" href="/admin/settings.php">Configurações</a></li>
+                <?php if (Auth::isAdmin()): ?>
+                <li class="nav-item"><a class="nav-link" href="/admin/users.php">Usuários</a></li>
+                <?php endif; ?>
             </ul>
             <ul class="navbar-nav">
                 <li class="nav-item">

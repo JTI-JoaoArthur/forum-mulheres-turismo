@@ -8,6 +8,8 @@
  * - Bloqueio após 5 tentativas falhas (15 min)
  * - Regeneração de session ID após login
  * - Cookies seguros (httponly, samesite)
+ * - Suporte a roles (admin, editor)
+ * - Fluxo needs_password para primeiro acesso
  */
 
 require_once __DIR__ . '/Database.php';
@@ -74,8 +76,22 @@ class Auth
     }
 
     /**
+     * Exigir role admin — redireciona para dashboard se não for admin
+     */
+    public static function requireAdmin(): void
+    {
+        self::require();
+        if (self::role() !== 'admin') {
+            $_SESSION['flash_message'] = 'Acesso restrito a administradores.';
+            $_SESSION['flash_type'] = 'danger';
+            header('Location: /admin/dashboard.php');
+            exit;
+        }
+    }
+
+    /**
      * Tentar login
-     * @return array{success: bool, message: string}
+     * @return array{success: bool, message: string, needs_password?: bool}
      */
     public static function attempt(string $email, string $password): array
     {
@@ -91,6 +107,16 @@ class Auth
             return ['success' => false, 'message' => 'Credenciais inválidas.'];
         }
 
+        // Conta precisa definir senha no primeiro acesso
+        if ($user['needs_password']) {
+            return [
+                'success'        => false,
+                'needs_password' => true,
+                'message'        => 'Esta conta precisa definir uma senha antes do primeiro acesso.',
+                'user_email'     => $user['email'],
+            ];
+        }
+
         // Verificar bloqueio
         if ($user['locked_until'] && strtotime($user['locked_until']) > time()) {
             $remaining = ceil((strtotime($user['locked_until']) - time()) / 60);
@@ -104,11 +130,9 @@ class Auth
         // Verificar senha
         if (!password_verify($password, $user['password_hash'])) {
             $attempts = $user['failed_attempts'] + 1;
-            $updates = ['failed_attempts' => $attempts];
 
             if ($attempts >= self::MAX_ATTEMPTS) {
                 $lockUntil = date('Y-m-d H:i:s', time() + self::LOCKOUT_MINUTES * 60);
-                $updates['locked_until'] = $lockUntil;
                 Database::query(
                     "UPDATE users SET failed_attempts = ?, locked_until = ? WHERE id = ?",
                     [$attempts, $lockUntil, $user['id']]
@@ -145,6 +169,7 @@ class Auth
         $_SESSION['admin_id'] = $user['id'];
         $_SESSION['admin_name'] = $user['name'];
         $_SESSION['admin_email'] = $user['email'];
+        $_SESSION['admin_role'] = $user['role'];
         $_SESSION['admin_authenticated'] = true;
         $_SESSION['last_activity'] = time();
 
@@ -184,7 +209,24 @@ class Auth
             'id'    => $_SESSION['admin_id'],
             'name'  => $_SESSION['admin_name'],
             'email' => $_SESSION['admin_email'],
+            'role'  => $_SESSION['admin_role'] ?? 'editor',
         ];
+    }
+
+    /**
+     * Obter role do admin logado
+     */
+    public static function role(): string
+    {
+        return $_SESSION['admin_role'] ?? 'editor';
+    }
+
+    /**
+     * Verificar se é admin
+     */
+    public static function isAdmin(): bool
+    {
+        return self::role() === 'admin';
     }
 
     /**
@@ -200,15 +242,35 @@ class Auth
     }
 
     /**
-     * Criar usuário admin (usado no setup inicial)
+     * Criar usuário (usado no setup/seeding)
      */
-    public static function createUser(string $email, string $password, string $name): int
+    public static function createUser(string $email, string $password, string $name, array $extra = []): int
     {
-        $hash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
-        return Database::insert('users', [
+        $data = [
             'email'         => mb_strtolower(trim($email)),
-            'password_hash' => $hash,
+            'password_hash' => $password !== '' ? password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]) : '',
             'name'          => trim($name),
-        ]);
+        ];
+
+        // Campos opcionais: role, needs_password, recovery_email1, recovery_email2
+        foreach (['role', 'needs_password', 'recovery_email1', 'recovery_email2'] as $field) {
+            if (isset($extra[$field])) {
+                $data[$field] = $extra[$field];
+            }
+        }
+
+        return Database::insert('users', $data);
+    }
+
+    /**
+     * Definir senha de um usuário (primeiro acesso ou reset)
+     */
+    public static function setPassword(int $userId, string $newPassword): void
+    {
+        $hash = password_hash($newPassword, PASSWORD_BCRYPT, ['cost' => 12]);
+        Database::query(
+            "UPDATE users SET password_hash = ?, needs_password = 0, updated_at = datetime('now', 'localtime') WHERE id = ?",
+            [$hash, $userId]
+        );
     }
 }

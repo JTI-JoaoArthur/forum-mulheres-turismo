@@ -1,52 +1,55 @@
 <?php
 /**
- * Setup inicial — Cria o primeiro usuário administrador
+ * Setup inicial — Semeia os 2 usuários predefinidos
  *
- * Este arquivo se auto-desabilita após o primeiro uso.
+ * ASCOM (editor): sem senha, needs_password=1, 2 e-mails de recuperação
+ * CGMK  (admin):  senha predefinida $SETUP_ADMIN_PASSWORD
+ *
+ * Este arquivo se auto-desabilita após execução (verifica se já há usuários).
  * Acesse apenas uma vez: /admin/setup.php
  */
 
 require_once __DIR__ . '/lib/Database.php';
 require_once __DIR__ . '/lib/Auth.php';
-require_once __DIR__ . '/lib/CSRF.php';
 
 Auth::startSession();
 
-// Verificar se já existe usuário — se sim, bloquear acesso
+// Se já existem usuários, bloquear acesso
 $userCount = Database::fetchOne("SELECT COUNT(*) as total FROM users")['total'];
 if ($userCount > 0) {
     http_response_code(403);
     echo '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><title>Acesso Negado</title></head><body>';
-    echo '<h1>Setup já realizado</h1><p>O administrador já foi criado. <a href="/admin/">Ir para o login</a></p>';
+    echo '<h1>Setup já realizado</h1><p>Os usuários já foram criados. <a href="/admin/">Ir para o login</a></p>';
     echo '</body></html>';
     exit;
 }
 
-$error = '';
-$success = false;
+// ── Semear os 2 usuários ───────────────────────────────────────────
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    CSRF::require();
+// 1) CGMK — Administrador com senha predefinida
+Auth::createUser(
+    'cgmk@turismo.gov.br',
+    '$SETUP_ADMIN_PASSWORD',
+    'CGMK',
+    [
+        'role' => 'admin',
+    ]
+);
 
-    $name     = trim($_POST['name'] ?? '');
-    $email    = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
-    $confirm  = $_POST['password_confirm'] ?? '';
+// 2) ASCOM — Editor sem senha (definirá no primeiro acesso)
+Auth::createUser(
+    'ascom@turismo.gov.br',
+    '', // sem senha
+    'ASCOM',
+    [
+        'role'            => 'editor',
+        'needs_password'  => 1,
+        'recovery_email1' => 'ascom1@turismo.gov.br',
+        'recovery_email2' => 'ascom2@turismo.gov.br',
+    ]
+);
 
-    // Validações
-    if (mb_strlen($name) < 2) {
-        $error = 'Nome deve ter pelo menos 2 caracteres.';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = 'E-mail inválido.';
-    } elseif (mb_strlen($password) < 12) {
-        $error = 'Senha deve ter pelo menos 12 caracteres.';
-    } elseif ($password !== $confirm) {
-        $error = 'As senhas não coincidem.';
-    } else {
-        Auth::createUser($email, $password, $name);
-        $success = true;
-    }
-}
+Auth::log(null, 'setup_completed', 'Usuários CGMK (admin) e ASCOM (editor) criados via setup');
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -54,14 +57,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <title>Setup — Painel Administrativo</title>
+    <title>Setup Concluído — Painel Administrativo</title>
     <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
     <style>
         body { background: #f4f2f7; }
-        .setup-card { max-width: 480px; margin: 80px auto; }
+        .setup-card { max-width: 540px; margin: 80px auto; }
         .brand-color { color: #64428c; }
-        .btn-primary { background: #64428c; border-color: #64428c; }
-        .btn-primary:hover { background: #523672; border-color: #523672; }
     </style>
 </head>
 <body>
@@ -69,45 +70,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="setup-card">
         <div class="card shadow-sm">
             <div class="card-body p-4">
-                <h3 class="text-center brand-color mb-4">Configuração Inicial</h3>
-
-                <?php if ($success): ?>
-                    <div class="alert alert-success">
-                        Administrador criado com sucesso!
-                        <a href="/admin/" class="alert-link">Ir para o login</a>.
-                    </div>
-                <?php else: ?>
-                    <?php if ($error): ?>
-                        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
-                    <?php endif; ?>
-
-                    <p class="text-muted mb-4">Crie o primeiro usuário administrador do painel.</p>
-
-                    <form method="post" autocomplete="off">
-                        <?= CSRF::field() ?>
-                        <div class="form-group mb-3">
-                            <label for="name">Nome</label>
-                            <input type="text" class="form-control" id="name" name="name"
-                                   value="<?= htmlspecialchars($name ?? '') ?>" required minlength="2">
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="email">E-mail</label>
-                            <input type="email" class="form-control" id="email" name="email"
-                                   value="<?= htmlspecialchars($email ?? '') ?>" required>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="password">Senha <small class="text-muted">(mínimo 12 caracteres)</small></label>
-                            <input type="password" class="form-control" id="password" name="password"
-                                   required minlength="12">
-                        </div>
-                        <div class="form-group mb-4">
-                            <label for="password_confirm">Confirmar senha</label>
-                            <input type="password" class="form-control" id="password_confirm" name="password_confirm"
-                                   required minlength="12">
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-block w-100">Criar Administrador</button>
-                    </form>
-                <?php endif; ?>
+                <h3 class="text-center brand-color mb-4">Setup Concluído</h3>
+                <div class="alert alert-success">
+                    <strong>Usuários criados com sucesso!</strong>
+                </div>
+                <table class="table table-sm">
+                    <thead>
+                        <tr><th>Conta</th><th>E-mail</th><th>Perfil</th><th>Senha</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>CGMK</strong></td>
+                            <td><code>cgmk@turismo.gov.br</code></td>
+                            <td><span class="badge badge-dark">Admin</span></td>
+                            <td>Predefinida</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ASCOM</strong></td>
+                            <td><code>ascom@turismo.gov.br</code></td>
+                            <td><span class="badge badge-secondary">Editor</span></td>
+                            <td>A definir no 1º acesso</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <hr>
+                <p class="text-muted small mb-0">
+                    A ASCOM deverá acessar <a href="/admin/set-password.php">/admin/set-password.php</a>
+                    para definir sua senha usando um dos e-mails de recuperação cadastrados.
+                </p>
+                <a href="/admin/" class="btn btn-primary btn-block w-100 mt-3">Ir para o Login</a>
             </div>
         </div>
     </div>
