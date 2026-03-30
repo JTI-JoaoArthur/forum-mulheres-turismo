@@ -15,12 +15,15 @@ $counts = [
     'sponsors' => Database::fetchOne("SELECT COUNT(*) as n FROM sponsors")['n'],
 ];
 
-// Últimas ações
-$recentLogs = Database::fetchAll(
-    "SELECT al.*, u.name as user_name
-     FROM audit_log al LEFT JOIN users u ON al.user_id = u.id
-     ORDER BY al.created_at DESC LIMIT 10"
-);
+// Últimas ações (somente admin)
+$recentLogs = [];
+if (Auth::isAdmin()) {
+    $recentLogs = Database::fetchAll(
+        "SELECT al.*, u.name as user_name
+         FROM audit_log al LEFT JOIN users u ON al.user_id = u.id
+         ORDER BY al.created_at DESC LIMIT 10"
+    );
+}
 
 require __DIR__ . '/templates/header.php';
 ?>
@@ -51,6 +54,7 @@ require __DIR__ . '/templates/header.php';
 </div>
 
 <div class="row">
+    <?php if (Auth::isAdmin()): ?>
     <div class="col-lg-8">
         <div class="card">
             <div class="card-header"><h6 class="mb-0">Atividade Recente</h6></div>
@@ -82,7 +86,8 @@ require __DIR__ . '/templates/header.php';
             </div>
         </div>
     </div>
-    <div class="col-lg-4">
+    <?php endif; ?>
+    <div class="<?= Auth::isAdmin() ? 'col-lg-4' : 'col-lg-12' ?>">
         <div class="card">
             <div class="card-header"><h6 class="mb-0">Links Rápidos</h6></div>
             <div class="card-body">
