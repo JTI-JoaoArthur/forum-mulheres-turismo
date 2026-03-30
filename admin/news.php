@@ -47,7 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'summary'      => trim($_POST['summary'] ?? ''),
             'body'         => trim($_POST['body'] ?? ''),
             'author'       => trim($_POST['author'] ?? ''),
-            'published_at' => trim($_POST['published_at'] ?? date('Y-m-d')),
+            'published_at' => Auth::isAdmin() && !empty($_POST['published_at'])
+                ? trim($_POST['published_at'])
+                : ($id > 0 ? (Database::fetchOne("SELECT published_at FROM news WHERE id = ?", [$id])['published_at'] ?? date('Y-m-d H:i:s')) : date('Y-m-d H:i:s')),
             'is_featured'  => isset($_POST['is_featured']) ? 1 : 0,
             'is_in_gallery' => isset($_POST['is_in_gallery']) ? 1 : 0,
             'is_visible'   => isset($_POST['is_visible']) ? 1 : 0,
@@ -264,8 +266,13 @@ if ($action === 'form'):
                     <div class="card-body">
                         <div class="form-group mb-3">
                             <label for="published_at">Data de publicação</label>
-                            <input type="date" class="form-control" id="published_at" name="published_at"
-                                   value="<?= htmlspecialchars($news['published_at'] ?? date('Y-m-d')) ?>">
+                            <?php if (Auth::isAdmin()): ?>
+                            <input type="datetime-local" class="form-control" id="published_at" name="published_at"
+                                   value="<?= htmlspecialchars(str_replace(' ', 'T', substr($news['published_at'] ?? date('Y-m-d H:i:s'), 0, 16))) ?>">
+                            <?php else: ?>
+                            <input type="text" class="form-control" readonly
+                                   value="<?= htmlspecialchars($news['published_at'] ?? date('Y-m-d H:i:s')) ?>">
+                            <?php endif; ?>
                         </div>
                         <div class="form-check mb-2">
                             <input type="checkbox" class="form-check-input" id="is_visible" name="is_visible" value="1"

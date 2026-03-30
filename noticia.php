@@ -22,7 +22,7 @@ $mesesPt = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agost
 $pubDateFmt = '';
 if ($news) {
     $ts = strtotime($news['published_at']);
-    $pubDateFmt = date('d', $ts) . ' de ' . $mesesPt[(int)date('n', $ts) - 1] . ' de ' . date('Y', $ts);
+    $pubDateFmt = date('d', $ts) . ' de ' . $mesesPt[(int)date('n', $ts) - 1] . ' de ' . date('Y', $ts) . ' às ' . date('H:i:s', $ts);
 }
 ?>
 <!doctype html>
