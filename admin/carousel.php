@@ -23,8 +23,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($postAction === 'save') {
         $rawLink = trim($_POST['link'] ?? '');
+        $rawVideo = trim($_POST['video_url'] ?? '');
         $data = [
             'link'          => $rawLink,
+            'video_url'     => $rawVideo,
             'display_order' => (int) ($_POST['display_order'] ?? 0),
             'is_pinned'     => ((int) ($_POST['display_order'] ?? 0)) > 0 ? 1 : 0,
             'is_visible'    => isset($_POST['is_visible']) ? 1 : 0,
@@ -35,8 +37,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($rawLink !== '' && !preg_match('#^(https?://|/[^/])#i', $rawLink)) {
             $errors[] = 'Link deve começar com http://, https:// ou /';
         }
-        if (!$id && empty($_FILES['image']['name'])) {
-            $errors[] = 'Imagem é obrigatória para novo slide.';
+        if ($rawVideo !== '' && !preg_match('#^https?://(www\.)?(youtube\.com|youtu\.be|vimeo\.com)/#i', $rawVideo)) {
+            $errors[] = 'URL de vídeo deve ser do YouTube ou Vimeo.';
+        }
+        if (!$id && empty($_FILES['image']['name']) && $rawVideo === '') {
+            $errors[] = 'Imagem ou vídeo é obrigatório para novo slide.';
         }
 
         if (!empty($_FILES['image']['name'])) {
@@ -126,8 +131,14 @@ if ($action === 'form'):
                 </div>
                 <div class="col-md-6">
                     <div class="form-group mb-3">
+                        <label>Vídeo (YouTube ou Vimeo)</label>
+                        <input type="url" class="form-control" name="video_url" value="<?= htmlspecialchars($slide['video_url'] ?? '') ?>" placeholder="https://www.youtube.com/watch?v=...">
+                        <small class="form-text text-muted">Opcional. Se preenchido, o vídeo será exibido no slide.</small>
+                    </div>
+                    <div class="form-group mb-3">
                         <label>Link (ao clicar no slide)</label>
                         <input type="url" class="form-control" name="link" value="<?= htmlspecialchars($slide['link'] ?? '') ?>" placeholder="https://...">
+                        <small class="form-text text-muted">Ignorado se houver vídeo.</small>
                     </div>
                     <div class="form-group mb-3">
                         <label>Posição fixa no carrossel</label>

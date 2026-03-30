@@ -89,6 +89,7 @@ CREATE TABLE IF NOT EXISTS carousel (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     image TEXT NOT NULL,
     link TEXT,
+    video_url TEXT,
     display_order INTEGER DEFAULT 0,
     is_pinned INTEGER DEFAULT 0,
     is_visible INTEGER DEFAULT 1,

@@ -25,8 +25,8 @@ if (dbReady()) {
 // Carrossel: slides automáticos (notícias destaque) + manuais
 $carouselSlides = [];
 if (dbReady()) {
-    $featured = Database::fetchAll("SELECT featured_image as image, CONCAT('noticia.php?slug=', slug) as link FROM news WHERE is_featured = 1 AND is_visible = 1 AND featured_image IS NOT NULL AND featured_image != '' ORDER BY published_at DESC");
-    $manual = Database::fetchAll("SELECT image, link, is_pinned, display_order FROM carousel WHERE is_visible = 1 ORDER BY display_order ASC");
+    $featured = Database::fetchAll("SELECT featured_image as image, ('noticia.php?slug=' || slug) as link, video_url, is_pinned, 0 as display_order FROM news WHERE is_featured = 1 AND is_visible = 1 AND (featured_image IS NOT NULL AND featured_image != '' OR video_url IS NOT NULL AND video_url != '') ORDER BY published_at DESC");
+    $manual = Database::fetchAll("SELECT image, link, video_url, is_pinned, display_order FROM carousel WHERE is_visible = 1 ORDER BY display_order ASC");
     // Slides fixados primeiro, depois automáticos intercalados com manuais não-fixados
     $pinned = array_filter($manual, fn($s) => $s['is_pinned']);
     $unpinned = array_filter($manual, fn($s) => !$s['is_pinned']);
@@ -128,9 +128,24 @@ $mesesPt = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','D
     <!-- Carrossel de Destaques -->
     <div class="swiper mySwiper" id="carrossel-destaques">
         <div class="swiper-wrapper">
-            <?php foreach ($carouselSlides as $slide): ?>
-            <div class="swiper-slide"<?= !empty($slide['link']) ? ' data-href="' . htmlspecialchars($slide['link']) . '"' : '' ?>>
+            <?php foreach ($carouselSlides as $slide):
+                $videoEmbed = '';
+                if (!empty($slide['video_url'])) {
+                    if (preg_match('#(?:youtube\.com/watch\?v=|youtu\.be/)([\w-]+)#', $slide['video_url'], $m)) {
+                        $videoEmbed = 'https://www.youtube.com/embed/' . $m[1] . '?autoplay=0&rel=0';
+                    } elseif (preg_match('#vimeo\.com/(\d+)#', $slide['video_url'], $m)) {
+                        $videoEmbed = 'https://player.vimeo.com/video/' . $m[1];
+                    }
+                }
+            ?>
+            <div class="swiper-slide"<?= !empty($slide['link']) && !$videoEmbed ? ' data-href="' . htmlspecialchars($slide['link']) . '"' : '' ?>>
+                <?php if ($videoEmbed): ?>
+                <div class="embed-responsive embed-responsive-16by9">
+                    <iframe class="embed-responsive-item" src="<?= htmlspecialchars($videoEmbed) ?>" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+                <?php elseif (!empty($slide['image'])): ?>
                 <img src="/<?= htmlspecialchars($slide['image']) ?>" alt="Slide do carrossel" style="width:100%;height:auto;display:block;">
+                <?php endif; ?>
             </div>
             <?php endforeach; ?>
         </div>

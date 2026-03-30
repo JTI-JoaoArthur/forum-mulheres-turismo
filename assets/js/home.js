@@ -14,14 +14,24 @@ if (slides.length > 0) {
             nextEl: "#carrossel-destaques .swiper-button-next",
             prevEl: "#carrossel-destaques .swiper-button-prev"
         },
-        pagination: { el: "#carrossel-destaques .swiper-pagination", clickable: true }
+        pagination: { el: "#carrossel-destaques .swiper-pagination", clickable: true },
+        on: {
+            slideChangeTransitionEnd: function() {
+                var active = this.slides[this.activeIndex];
+                if (active && active.querySelector("iframe")) {
+                    this.autoplay.stop();
+                } else {
+                    this.autoplay.start();
+                }
+            }
+        }
     });
     slides.forEach(function(e) {
         var a = e.getAttribute("data-href");
         if (a) {
             e.style.cursor = "pointer";
             e.addEventListener("click", function(ev) {
-                if (!ev.target.closest(".swiper-button-next, .swiper-button-prev")) {
+                if (!ev.target.closest(".swiper-button-next, .swiper-button-prev, iframe")) {
                     window.location.href = a;
                 }
             });
