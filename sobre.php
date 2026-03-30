@@ -67,7 +67,7 @@ $albumPhotos = getAlbumPhotos();
                             <h2><?= htmlspecialchars($aboutTitle) ?></h2>
                         </div>
                         <?php if ($aboutBody): ?>
-                            <?= $aboutBody ?>
+                            <?= sanitizeHtml($aboutBody) ?>
                         <?php else: ?>
                             <p>O Fórum de Mulheres no Turismo é uma iniciativa conjunta do Ministério do Turismo e da ONU Turismo, com o objetivo de promover a igualdade de gênero e o empoderamento feminino no setor turístico. O evento reunirá lideranças, especialistas e profissionais para debater políticas públicas, boas práticas e oportunidades para mulheres no turismo.</p>
                             <p>Durante dois dias de programação, participantes terão acesso a painéis, palestras e rodas de conversa sobre temas como liderança feminina, empreendedorismo, sustentabilidade e inclusão no turismo. O evento é de acesso gratuito.</p>

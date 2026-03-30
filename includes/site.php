@@ -74,3 +74,37 @@ function dbReady(): bool {
     global $_dbReady;
     return $_dbReady;
 }
+
+/**
+ * Sanitiza HTML permitindo apenas tags e atributos seguros.
+ * Previne Stored XSS em campos que aceitam HTML (news body, about body).
+ */
+function sanitizeHtml(string $html): string {
+    if (trim($html) === '') return '';
+
+    // Tags permitidas
+    $allowedTags = '<p><br><strong><b><em><i><u><s><ol><ul><li><a><img><h2><h3><h4><h5><h6><blockquote><hr><table><thead><tbody><tr><th><td><figure><figcaption><div><span>';
+    $html = strip_tags($html, $allowedTags);
+
+    // Remover atributos perigosos via regex
+    // Remove: on* (onclick, onerror, etc.), javascript:, data:, expression()
+    $html = preg_replace('/\s+on\w+\s*=\s*["\'][^"\']*["\']/i', '', $html);
+    $html = preg_replace('/\s+on\w+\s*=\s*\S+/i', '', $html);
+    $html = preg_replace('/javascript\s*:/i', '', $html);
+    $html = preg_replace('/data\s*:[^image]/i', 'blocked:', $html);
+    $html = preg_replace('/expression\s*\(/i', 'blocked(', $html);
+    $html = preg_replace('/vbscript\s*:/i', '', $html);
+
+    return $html;
+}
+
+/**
+ * Valida que uma URL usa protocolo seguro.
+ * Retorna a URL limpa ou string vazia se insegura.
+ */
+function sanitizeUrl(string $url): string {
+    $url = trim($url);
+    if ($url === '' || $url === '#') return $url;
+    if (preg_match('#^(https?://|/[^/])#i', $url)) return $url;
+    return '';
+}

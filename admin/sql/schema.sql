@@ -19,6 +19,8 @@ CREATE TABLE IF NOT EXISTS users (
     needs_password INTEGER DEFAULT 0,
     failed_attempts INTEGER DEFAULT 0,
     locked_until TEXT,
+    recovery_token_hash TEXT,
+    recovery_token_expires TEXT,
     last_login TEXT,
     created_at TEXT DEFAULT (datetime('now', 'localtime')),
     updated_at TEXT DEFAULT (datetime('now', 'localtime'))

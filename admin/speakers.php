@@ -38,6 +38,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors = [];
         if (mb_strlen($data['name']) < 2) $errors[] = 'Nome é obrigatório (mín. 2 caracteres).';
 
+        // Validar URLs contra javascript:/data: protocol injection
+        foreach (['linkedin', 'instagram', 'website'] as $urlField) {
+            $v = $data[$urlField];
+            if ($v !== '' && !preg_match('#^(https?://|/[^/])#i', $v)) {
+                $errors[] = ucfirst($urlField) . ' deve começar com http:// ou https://';
+            }
+        }
+
         // Upload de foto
         if (!empty($_FILES['photo']['name'])) {
             $upload = Upload::image($_FILES['photo'], 'speakers');

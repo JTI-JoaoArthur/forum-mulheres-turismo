@@ -73,6 +73,15 @@ class Auth
             header('Location: /admin/index.php');
             exit;
         }
+
+        // Primeiro acesso: redirecionar para troca de senha
+        if (!empty($_SESSION['admin_needs_password'])) {
+            $current = basename($_SERVER['SCRIPT_NAME']);
+            if ($current !== 'change-password.php' && $current !== 'logout.php') {
+                header('Location: /admin/change-password.php');
+                exit;
+            }
+        }
     }
 
     /**
@@ -105,16 +114,6 @@ class Auth
         if (!$user) {
             self::log(null, 'login_failed', "Email não encontrado: {$email}");
             return ['success' => false, 'message' => 'Credenciais inválidas.'];
-        }
-
-        // Conta precisa definir senha no primeiro acesso
-        if ($user['needs_password']) {
-            return [
-                'success'        => false,
-                'needs_password' => true,
-                'message'        => 'Esta conta precisa definir uma senha antes do primeiro acesso.',
-                'user_email'     => $user['email'],
-            ];
         }
 
         // Verificar bloqueio
@@ -171,6 +170,7 @@ class Auth
         $_SESSION['admin_email'] = $user['email'];
         $_SESSION['admin_role'] = $user['role'];
         $_SESSION['admin_authenticated'] = true;
+        $_SESSION['admin_needs_password'] = (bool) $user['needs_password'];
         $_SESSION['last_activity'] = time();
 
         self::log($user['id'], 'login_success');
@@ -227,6 +227,22 @@ class Auth
     public static function isAdmin(): bool
     {
         return self::role() === 'admin';
+    }
+
+    /**
+     * Verificar se precisa trocar senha (primeiro acesso)
+     */
+    public static function needsPassword(): bool
+    {
+        return !empty($_SESSION['admin_needs_password']);
+    }
+
+    /**
+     * Marcar que a troca de senha foi concluída
+     */
+    public static function clearNeedsPassword(): void
+    {
+        $_SESSION['admin_needs_password'] = false;
     }
 
     /**

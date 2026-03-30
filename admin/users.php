@@ -52,6 +52,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    if ($postAction === 'update_recovery' && $id > 0) {
+        $recovery1 = mb_strtolower(trim($_POST['recovery_email1'] ?? ''));
+        $recovery2 = mb_strtolower(trim($_POST['recovery_email2'] ?? ''));
+        $errors = [];
+        if ($recovery1 && !filter_var($recovery1, FILTER_VALIDATE_EMAIL)) $errors[] = 'E-mail de recuperação 1 inválido.';
+        if ($recovery2 && !filter_var($recovery2, FILTER_VALIDATE_EMAIL)) $errors[] = 'E-mail de recuperação 2 inválido.';
+        if (!empty($errors)) {
+            $_SESSION['flash_message'] = implode(' ', $errors);
+            $_SESSION['flash_type'] = 'danger';
+        } else {
+            Database::query(
+                "UPDATE users SET recovery_email1 = ?, recovery_email2 = ?, updated_at = datetime('now', 'localtime') WHERE id = ?",
+                [$recovery1 ?: null, $recovery2 ?: null, $id]
+            );
+            $user = Database::fetchOne("SELECT name FROM users WHERE id = ?", [$id]);
+            Auth::log(Auth::user()['id'], 'user_recovery_updated', "E-mails de recuperação atualizados para {$user['name']} (#{$id})");
+            $_SESSION['flash_message'] = "E-mails de recuperação de {$user['name']} atualizados.";
+            $_SESSION['flash_type'] = 'success';
+        }
+        header('Location: /admin/users.php');
+        exit;
+    }
+
     if ($postAction === 'unlock' && $id > 0) {
         Database::query(
             "UPDATE users SET failed_attempts = 0, locked_until = NULL, updated_at = datetime('now', 'localtime') WHERE id = ?",
@@ -134,6 +157,12 @@ if ($message): ?>
                     <i class="fas fa-key"></i> Redefinir Senha
                 </button>
 
+                <!-- E-mails de Recuperação -->
+                <button class="btn btn-outline-info btn-sm" type="button"
+                        data-toggle="collapse" data-target="#recovery<?= $u['id'] ?>">
+                    <i class="fas fa-envelope"></i> Recuperação
+                </button>
+
                 <!-- Ativar/Desativar (não pode desativar a si mesmo) -->
                 <?php if ($u['id'] !== Auth::user()['id']): ?>
                 <form method="post" class="d-inline">
@@ -169,6 +198,25 @@ if ($message): ?>
                         <input type="password" name="new_password" class="form-control form-control-sm mr-2"
                                placeholder="Nova senha (mín. 12)" minlength="12" required style="width:220px">
                         <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
+                    </form>
+                </div>
+
+                <!-- Formulário de e-mails de recuperação (colapsado) -->
+                <div class="collapse mt-3" id="recovery<?= $u['id'] ?>">
+                    <form method="post">
+                        <?= CSRF::field() ?>
+                        <input type="hidden" name="action" value="update_recovery">
+                        <input type="hidden" name="id" value="<?= $u['id'] ?>">
+                        <div class="form-group mb-2">
+                            <input type="email" name="recovery_email1" class="form-control form-control-sm"
+                                   placeholder="E-mail de recuperação 1" value="<?= htmlspecialchars($u['recovery_email1'] ?? '') ?>">
+                        </div>
+                        <div class="form-group mb-2">
+                            <input type="email" name="recovery_email2" class="form-control form-control-sm"
+                                   placeholder="E-mail de recuperação 2" value="<?= htmlspecialchars($u['recovery_email2'] ?? '') ?>">
+                        </div>
+                        <button type="submit" class="btn btn-info btn-sm">Salvar e-mails</button>
+                        <small class="form-text text-muted">Usados para recuperação de senha pelo próprio usuário.</small>
                     </form>
                 </div>
             </div>

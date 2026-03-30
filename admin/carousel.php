@@ -22,14 +22,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $postAction = $_POST['action'] ?? '';
 
     if ($postAction === 'save') {
+        $rawLink = trim($_POST['link'] ?? '');
         $data = [
-            'link'          => trim($_POST['link'] ?? ''),
+            'link'          => $rawLink,
             'display_order' => (int) ($_POST['display_order'] ?? 0),
             'is_pinned'     => isset($_POST['is_pinned']) ? 1 : 0,
             'is_visible'    => isset($_POST['is_visible']) ? 1 : 0,
         ];
 
         $errors = [];
+        // Validar URL do link contra javascript:/data: protocol
+        if ($rawLink !== '' && !preg_match('#^(https?://|/[^/])#i', $rawLink)) {
+            $errors[] = 'Link deve começar com http://, https:// ou /';
+        }
         if (!$id && empty($_FILES['image']['name'])) {
             $errors[] = 'Imagem é obrigatória para novo slide.';
         }

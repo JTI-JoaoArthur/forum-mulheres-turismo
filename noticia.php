@@ -114,7 +114,7 @@ if ($news) {
                         </p>
                         <p class="excert"><em><?= htmlspecialchars($news['summary']) ?></em></p>
 
-                        <?= $news['body'] ?>
+                        <?= sanitizeHtml($news['body'] ?? '') ?>
 
                         <?php if (!empty($gallery)): ?>
                         <div class="blog-gallery mt-4 mb-4">

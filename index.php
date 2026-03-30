@@ -149,7 +149,7 @@ $mesesPt = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','D
                             <h2><?= htmlspecialchars($aboutTitle) ?></h2>
                         </div>
                         <?php if ($aboutBody): ?>
-                            <?= $aboutBody ?>
+                            <?= sanitizeHtml($aboutBody) ?>
                         <?php else: ?>
                             <p>O Fórum de Mulheres no Turismo é uma iniciativa conjunta do Ministério do Turismo e da ONU Turismo, reunindo lideranças femininas para debater o papel da mulher no setor turístico brasileiro e internacional.</p>
                             <p>Dois dias de painéis, palestras e networking no <?= site('contact_venue') ?>.</p>

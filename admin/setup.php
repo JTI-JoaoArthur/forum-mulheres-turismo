@@ -2,7 +2,7 @@
 /**
  * Setup inicial — Semeia os 2 usuários predefinidos
  *
- * ASCOM (editor): sem senha, needs_password=1, 2 e-mails de recuperação
+ * ASCOM (editor): senha predefinida $SETUP_EDITOR_PASSWORD, troca sugerida no 1º acesso
  * CGMK  (admin):  senha predefinida $SETUP_ADMIN_PASSWORD
  *
  * Este arquivo se auto-desabilita após execução (verifica se já há usuários).
@@ -32,20 +32,20 @@ Auth::createUser(
     '$SETUP_ADMIN_PASSWORD',
     'CGMK',
     [
-        'role' => 'admin',
+        'role'            => 'admin',
+        'recovery_email1' => 'cgmk@turismo.gov.br',
     ]
 );
 
-// 2) ASCOM — Editor sem senha (definirá no primeiro acesso)
+// 2) ASCOM — Editor com senha predefinida (troca sugerida no 1º acesso)
 Auth::createUser(
-    'ascom@turismo.gov.br',
-    '', // sem senha
+    'imprensa@turismo.gov.br',
+    '$SETUP_EDITOR_PASSWORD',
     'ASCOM',
     [
         'role'            => 'editor',
         'needs_password'  => 1,
-        'recovery_email1' => 'ascom1@turismo.gov.br',
-        'recovery_email2' => 'ascom2@turismo.gov.br',
+        'recovery_email1' => 'imprensa@turismo.gov.br',
     ]
 );
 
@@ -87,16 +87,16 @@ Auth::log(null, 'setup_completed', 'Usuários CGMK (admin) e ASCOM (editor) cria
                         </tr>
                         <tr>
                             <td><strong>ASCOM</strong></td>
-                            <td><code>ascom@turismo.gov.br</code></td>
+                            <td><code>imprensa@turismo.gov.br</code></td>
                             <td><span class="badge badge-secondary">Editor</span></td>
-                            <td>A definir no 1º acesso</td>
+                            <td>Predefinida (troca sugerida no 1º acesso)</td>
                         </tr>
                     </tbody>
                 </table>
                 <hr>
                 <p class="text-muted small mb-0">
-                    A ASCOM deverá acessar <a href="/admin/set-password.php">/admin/set-password.php</a>
-                    para definir sua senha usando um dos e-mails de recuperação cadastrados.
+                    No primeiro login, a ASCOM será convidada a alterar sua senha padrão.
+                    Para recuperação de senha, o admin deve cadastrar e-mails de recuperação em Usuários.
                 </p>
                 <a href="/admin/" class="btn btn-primary btn-block w-100 mt-3">Ir para o Login</a>
             </div>

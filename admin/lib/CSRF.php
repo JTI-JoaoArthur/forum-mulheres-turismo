@@ -9,12 +9,18 @@
 class CSRF
 {
     /**
-     * Gerar token e armazenar na sessão
+     * Gerar token e armazenar na sessão.
+     * Reutiliza o token existente dentro da mesma requisição (múltiplos forms).
      */
     public static function generate(): string
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {
             session_start();
+        }
+
+        // Reutilizar token dentro da mesma requisição GET (múltiplos forms)
+        if ($_SERVER['REQUEST_METHOD'] === 'GET' && !empty($_SESSION['csrf_token'])) {
+            return $_SESSION['csrf_token'];
         }
 
         $token = bin2hex(random_bytes(32));
