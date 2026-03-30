@@ -1,0 +1,13 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+      - ./admin/data:/var/www/html/admin/data
+      - ./admin/uploads:/var/www/html/admin/uploads
+    environment:
+      - SETUP_ADMIN_PASSWORD=${SETUP_ADMIN_PASSWORD}
+      - SETUP_EDITOR_PASSWORD=${SETUP_EDITOR_PASSWORD}
+    restart: unless-stopped
