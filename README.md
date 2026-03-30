@@ -1,3 +1,5 @@
+![CI](https://github.com/JTI-JoaoArthur/forum-mulheres-turismo/actions/workflows/ci.yml/badge.svg) ![PHP 8+](https://img.shields.io/badge/PHP-8.0%2B-777BB4?logo=php&logoColor=white)
+
 # Forum de Mulheres no Turismo
 
 Site institucional do **Forum de Mulheres no Turismo** — iniciativa conjunta do Ministerio do Turismo e da ONU Turismo. Evento presencial no Centro de Convencoes de Joao Pessoa, Paraiba.

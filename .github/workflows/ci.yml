@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: PHP Lint & Security
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo_sqlite, mbstring
+
+      - name: Verificar syntax PHP
+        run: find . -name '*.php' -not -path './admin/lib/htmlpurifier/*' -print0 | xargs -0 -n1 php -l
+
+      - name: Verificar ausencia de segredos hardcoded
+        run: |
+          if grep -r '#CGMKadmin\|#ASCOMeditor' --include='*.php' .; then
+            echo "::error::Segredos hardcoded encontrados no codigo"
+            exit 1
+          fi
+
+      - name: Verificar arquivos sensiveis
+        run: |
+          for f in .env admin/data/cms.sqlite; do
+            if [ -f "$f" ]; then
+              echo "::error::Arquivo sensivel rastreado: $f"
+              exit 1
+            fi
+          done
