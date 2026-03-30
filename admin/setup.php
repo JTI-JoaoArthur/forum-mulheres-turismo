@@ -2,9 +2,11 @@
 /**
  * Setup inicial — Semeia os 2 usuários predefinidos
  *
- * ASCOM (editor): senha predefinida $SETUP_EDITOR_PASSWORD, troca sugerida no 1º acesso
- * CGMK  (admin):  senha predefinida $SETUP_ADMIN_PASSWORD
+ * As senhas são lidas de variáveis de ambiente (nunca hardcoded):
+ *   SETUP_ADMIN_PASSWORD  — senha do CGMK (admin)
+ *   SETUP_EDITOR_PASSWORD — senha da ASCOM (editor)
  *
+ * Defina antes de rodar: copie .env.example para .env e preencha.
  * Este arquivo se auto-desabilita após execução (verifica se já há usuários).
  * Acesse apenas uma vez: /admin/setup.php
  */
@@ -13,6 +15,19 @@ require_once __DIR__ . '/lib/Database.php';
 require_once __DIR__ . '/lib/Auth.php';
 
 Auth::startSession();
+
+// Carregar .env se existir (para ambientes sem variáveis de ambiente nativas)
+$envFile = __DIR__ . '/../.env';
+if (file_exists($envFile)) {
+    foreach (file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+        $line = trim($line);
+        if ($line === '' || $line[0] === '#') continue;
+        if (strpos($line, '=') !== false) {
+            [$key, $val] = explode('=', $line, 2);
+            $_ENV[trim($key)] = trim($val);
+        }
+    }
+}
 
 // Se já existem usuários, bloquear acesso
 $userCount = Database::fetchOne("SELECT COUNT(*) as total FROM users")['total'];
@@ -24,12 +39,26 @@ if ($userCount > 0) {
     exit;
 }
 
+// Ler senhas de variáveis de ambiente
+$adminPassword  = $_ENV['SETUP_ADMIN_PASSWORD']  ?? getenv('SETUP_ADMIN_PASSWORD')  ?: '';
+$editorPassword = $_ENV['SETUP_EDITOR_PASSWORD'] ?? getenv('SETUP_EDITOR_PASSWORD') ?: '';
+
+if (mb_strlen($adminPassword) < 12 || mb_strlen($editorPassword) < 12) {
+    http_response_code(500);
+    echo '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><title>Setup — Erro</title></head><body>';
+    echo '<h1>Variáveis de ambiente não configuradas</h1>';
+    echo '<p>Defina <code>SETUP_ADMIN_PASSWORD</code> e <code>SETUP_EDITOR_PASSWORD</code> (mín. 12 caracteres) no arquivo <code>.env</code> antes de rodar o setup.</p>';
+    echo '<p>Consulte <code>.env.example</code> para referência.</p>';
+    echo '</body></html>';
+    exit;
+}
+
 // ── Semear os 2 usuários ───────────────────────────────────────────
 
-// 1) CGMK — Administrador com senha predefinida
+// 1) CGMK — Administrador
 Auth::createUser(
     'cgmk@turismo.gov.br',
-    '$SETUP_ADMIN_PASSWORD',
+    $adminPassword,
     'CGMK',
     [
         'role'            => 'admin',
@@ -37,10 +66,10 @@ Auth::createUser(
     ]
 );
 
-// 2) ASCOM — Editor com senha predefinida (troca sugerida no 1º acesso)
+// 2) ASCOM — Editor (troca de senha sugerida no 1º acesso)
 Auth::createUser(
     'imprensa@turismo.gov.br',
-    '$SETUP_EDITOR_PASSWORD',
+    $editorPassword,
     'ASCOM',
     [
         'role'            => 'editor',
