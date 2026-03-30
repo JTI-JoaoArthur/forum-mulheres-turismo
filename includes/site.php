@@ -77,25 +77,25 @@ function dbReady(): bool {
 
 /**
  * Sanitiza HTML permitindo apenas tags e atributos seguros.
- * Previne Stored XSS em campos que aceitam HTML (news body, about body).
+ * Usa HTML Purifier (biblioteca dedicada) para prevenir Stored XSS.
  */
 function sanitizeHtml(string $html): string {
     if (trim($html) === '') return '';
 
-    // Tags permitidas
-    $allowedTags = '<p><br><strong><b><em><i><u><s><ol><ul><li><a><img><h2><h3><h4><h5><h6><blockquote><hr><table><thead><tbody><tr><th><td><figure><figcaption><div><span>';
-    $html = strip_tags($html, $allowedTags);
+    static $purifier = null;
+    if ($purifier === null) {
+        require_once __DIR__ . '/../admin/lib/htmlpurifier/HTMLPurifier.auto.php';
+        $config = HTMLPurifier_Config::createDefault();
+        $config->set('HTML.Allowed', 'p,br,strong,b,em,i,u,s,ol,ul,li,a[href|target|rel],img[src|alt|width|height],h2,h3,h4,h5,h6,blockquote,hr,table,thead,tbody,tr,th,td,div,span');
+        $config->set('HTML.Nofollow', true);
+        $config->set('HTML.TargetBlank', true);
+        $config->set('URI.AllowedSchemes', ['http' => true, 'https' => true, 'mailto' => true]);
+        $config->set('Attr.AllowedFrameTargets', ['_blank']);
+        $config->set('Cache.SerializerPath', sys_get_temp_dir());
+        $purifier = new HTMLPurifier($config);
+    }
 
-    // Remover atributos perigosos via regex
-    // Remove: on* (onclick, onerror, etc.), javascript:, data:, expression()
-    $html = preg_replace('/\s+on\w+\s*=\s*["\'][^"\']*["\']/i', '', $html);
-    $html = preg_replace('/\s+on\w+\s*=\s*\S+/i', '', $html);
-    $html = preg_replace('/javascript\s*:/i', '', $html);
-    $html = preg_replace('/data\s*:[^image]/i', 'blocked:', $html);
-    $html = preg_replace('/expression\s*\(/i', 'blocked(', $html);
-    $html = preg_replace('/vbscript\s*:/i', '', $html);
-
-    return $html;
+    return $purifier->purify($html);
 }
 
 /**

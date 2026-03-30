@@ -51,6 +51,36 @@ if (!empty($_POST['website'])) {
     exit;
 }
 
+// ── Rate Limiting: máx. 5 envios por IP a cada 15 minutos ──────────
+$rateLimitFile = __DIR__ . '/admin/data/rate_limit.json';
+$rateLimitMax  = 5;
+$rateLimitWindow = 900; // 15 minutos em segundos
+$clientIp = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+
+$rateData = [];
+if (file_exists($rateLimitFile)) {
+    $rateData = json_decode(file_get_contents($rateLimitFile), true) ?: [];
+}
+
+// Limpar entradas expiradas
+$now = time();
+foreach ($rateData as $ip => $timestamps) {
+    $rateData[$ip] = array_values(array_filter($timestamps, fn($t) => ($now - $t) < $rateLimitWindow));
+    if (empty($rateData[$ip])) unset($rateData[$ip]);
+}
+
+// Verificar limite do IP atual
+$attempts = $rateData[$clientIp] ?? [];
+if (count($attempts) >= $rateLimitMax) {
+    http_response_code(429);
+    echo json_encode(['status' => 'erro', 'mensagem' => 'Muitas tentativas. Aguarde alguns minutos antes de enviar novamente.']);
+    exit;
+}
+
+// Registrar tentativa
+$rateData[$clientIp][] = $now;
+file_put_contents($rateLimitFile, json_encode($rateData), LOCK_EX);
+
 // ── Coletar e sanitizar campos ──────────────────────────────────────
 $name    = trim($_POST['name'] ?? '');
 $email   = trim($_POST['email'] ?? '');
