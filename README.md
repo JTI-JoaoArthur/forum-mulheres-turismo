@@ -139,7 +139,60 @@ O painel administrativo (`/admin`) gerencia todo o conteudo do site:
 
 Todos os itens possuem acoes de editar, ocultar/exibir e excluir.
 
-## Producao
+## Deploy em producao
+
+### Requisitos do servidor
+
+- Apache 2.4+ com `mod_rewrite`, `mod_headers`
+- PHP 8.0+ (FPM recomendado) com `pdo_sqlite`, `mbstring`
+- HTTPS habilitado (os headers HSTS exigem)
+
+### Passo a passo
+
+```bash
+# 1. Clonar e configurar
+git clone https://github.com/JTI-JoaoArthur/forum-mulheres-turismo.git /var/www/forum
+cd /var/www/forum
+cp .env.example .env
+# Editar .env com senhas seguras
+
+# 2. Permissoes
+chown -R www-data:www-data admin/data admin/uploads
+chmod 750 admin/data admin/uploads
+
+# 3. Criar banco e usuarios
+php -S localhost:9999 &
+curl http://localhost:9999/admin/setup.php
+kill %1
+
+# 4. Apache vhost
+```
+
+```apache
+<VirtualHost *:443>
+    ServerName forumdeturismo.gov.br
+    DocumentRoot /var/www/forum
+
+    <Directory /var/www/forum>
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    # PHP-FPM
+    <FilesMatch \.php$>
+        SetHandler "proxy:unix:/run/php/php8.2-fpm.sock|fcgi://localhost"
+    </FilesMatch>
+</VirtualHost>
+```
+
+### Backup do SQLite
+
+```bash
+# Cron diario recomendado (SQLite nao suporta backup quente sem copia segura)
+sqlite3 /var/www/forum/admin/data/cms.sqlite ".backup '/backups/cms-$(date +%Y%m%d).sqlite'"
+```
+
+### Integracao com Plone
 
 O site sera integrado ao **Plone** (CMS institucional gov.br). A estrutura HTML foi projetada para facilitar essa migracao, com areas de conteudo bem definidas e semantica limpa.
 
