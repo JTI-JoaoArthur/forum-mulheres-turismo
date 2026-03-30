@@ -116,6 +116,22 @@ if ($news) {
 
                         <?= sanitizeHtml($news['body'] ?? '') ?>
 
+                        <?php if (!empty($news['video_url'])):
+                            $videoEmbed = '';
+                            if (preg_match('#(?:youtube\.com/watch\?v=|youtu\.be/)([\w-]+)#', $news['video_url'], $m)) {
+                                $videoEmbed = 'https://www.youtube.com/embed/' . $m[1];
+                            } elseif (preg_match('#vimeo\.com/(\d+)#', $news['video_url'], $m)) {
+                                $videoEmbed = 'https://player.vimeo.com/video/' . $m[1];
+                            }
+                            if ($videoEmbed):
+                        ?>
+                        <div class="video-container mt-4 mb-4">
+                           <div class="embed-responsive embed-responsive-16by9">
+                              <iframe class="embed-responsive-item" src="<?= htmlspecialchars($videoEmbed) ?>" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                           </div>
+                        </div>
+                        <?php endif; endif; ?>
+
                         <?php if (!empty($gallery)): ?>
                         <div class="blog-gallery mt-4 mb-4">
                            <div class="row">

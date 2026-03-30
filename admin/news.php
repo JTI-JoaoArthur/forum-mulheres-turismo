@@ -47,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'summary'      => trim($_POST['summary'] ?? ''),
             'body'         => trim($_POST['body'] ?? ''),
             'author'       => trim($_POST['author'] ?? ''),
+            'video_url'    => trim($_POST['video_url'] ?? ''),
             'published_at' => Auth::isAdmin() && !empty($_POST['published_at'])
                 ? trim($_POST['published_at'])
                 : ($id > 0 ? (Database::fetchOne("SELECT published_at FROM news WHERE id = ?", [$id])['published_at'] ?? date('Y-m-d H:i:s')) : date('Y-m-d H:i:s')),
@@ -58,6 +59,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors = [];
         if (mb_strlen($data['title']) < 3) $errors[] = 'Título é obrigatório (mín. 3 caracteres).';
         if (mb_strlen($data['summary']) < 10) $errors[] = 'Resumo é obrigatório (mín. 10 caracteres).';
+        if ($data['video_url'] !== '' && !preg_match('#^https?://(www\.)?(youtube\.com|youtu\.be|vimeo\.com)/#i', $data['video_url'])) {
+            $errors[] = 'URL de vídeo deve ser do YouTube ou Vimeo.';
+        }
 
         // Verificar slug duplicado
         $existing = Database::fetchOne(
@@ -220,6 +224,13 @@ if ($action === 'form'):
                                    value="<?= htmlspecialchars($news['author'] ?? '') ?>" maxlength="100"
                                    placeholder="Ex.: Assessoria de Comunicação">
                             <small class="form-text text-muted">Se preenchido, será exibido na notícia. Caso contrário, ficará oculto.</small>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="video_url">Vídeo (YouTube ou Vimeo)</label>
+                            <input type="url" class="form-control" id="video_url" name="video_url"
+                                   value="<?= htmlspecialchars($news['video_url'] ?? '') ?>"
+                                   placeholder="https://www.youtube.com/watch?v=...">
+                            <small class="form-text text-muted">Opcional. O vídeo será incorporado na notícia.</small>
                         </div>
                         <div class="form-group mb-3">
                             <label for="body">Conteúdo</label>

@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data = [
             'link'          => $rawLink,
             'display_order' => (int) ($_POST['display_order'] ?? 0),
-            'is_pinned'     => isset($_POST['is_pinned']) ? 1 : 0,
+            'is_pinned'     => ((int) ($_POST['display_order'] ?? 0)) > 0 ? 1 : 0,
             'is_visible'    => isset($_POST['is_visible']) ? 1 : 0,
         ];
 
@@ -130,12 +130,14 @@ if ($action === 'form'):
                         <input type="url" class="form-control" name="link" value="<?= htmlspecialchars($slide['link'] ?? '') ?>" placeholder="https://...">
                     </div>
                     <div class="form-group mb-3">
-                        <label>Ordem</label>
-                        <input type="number" class="form-control" name="display_order" value="<?= $slide['display_order'] ?? 0 ?>" min="0">
-                    </div>
-                    <div class="form-check mb-2">
-                        <input type="checkbox" class="form-check-input" name="is_pinned" value="1" <?= ($slide['is_pinned'] ?? 0) ? 'checked' : '' ?>>
-                        <label class="form-check-label">Fixar posição</label>
+                        <label>Posição fixa no carrossel</label>
+                        <select class="form-control" name="display_order">
+                            <option value="0" <?= ($slide['display_order'] ?? 0) == 0 ? 'selected' : '' ?>>Sem posição fixa (automático)</option>
+                            <?php for ($p = 1; $p <= 5; $p++): ?>
+                            <option value="<?= $p ?>" <?= ($slide['display_order'] ?? 0) == $p ? 'selected' : '' ?>>Posição <?= $p ?></option>
+                            <?php endfor; ?>
+                        </select>
+                        <small class="form-text text-muted">Posições 1-5 são fixas. Slides sem posição aparecem após os fixos.</small>
                     </div>
                     <div class="form-check mb-3">
                         <input type="checkbox" class="form-check-input" name="is_visible" value="1" <?= ($slide['is_visible'] ?? 1) ? 'checked' : '' ?>>

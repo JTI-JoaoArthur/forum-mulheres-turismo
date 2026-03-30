@@ -65,6 +65,7 @@ CREATE TABLE IF NOT EXISTS news (
     summary TEXT NOT NULL,
     body TEXT,
     author TEXT,
+    video_url TEXT,
     featured_image TEXT,
     published_at TEXT NOT NULL,
     is_featured INTEGER DEFAULT 0,
