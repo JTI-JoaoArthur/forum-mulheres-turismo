@@ -118,17 +118,24 @@ if ($news) {
 
                         <?php if (!empty($news['video_url'])):
                             $videoEmbed = '';
+                            $videoThumb = '';
                             if (preg_match('#(?:youtube\.com/watch\?v=|youtu\.be/)([\w-]+)#', $news['video_url'], $m)) {
-                                $videoEmbed = 'https://www.youtube.com/embed/' . $m[1];
+                                $videoEmbed = 'https://www.youtube.com/embed/' . $m[1] . '?autoplay=1&rel=0';
+                                $videoThumb = 'https://img.youtube.com/vi/' . $m[1] . '/maxresdefault.jpg';
                             } elseif (preg_match('#vimeo\.com/(\d+)#', $news['video_url'], $m)) {
-                                $videoEmbed = 'https://player.vimeo.com/video/' . $m[1];
+                                $videoEmbed = 'https://player.vimeo.com/video/' . $m[1] . '?autoplay=1';
                             }
                             if ($videoEmbed):
                         ?>
-                        <div class="video-container mt-4 mb-4">
-                           <div class="embed-responsive embed-responsive-16by9">
-                              <iframe class="embed-responsive-item" src="<?= htmlspecialchars($videoEmbed) ?>" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                           </div>
+                        <div class="video-container mt-4 mb-4 text-center">
+                           <a href="<?= htmlspecialchars($videoEmbed) ?>" class="video-popup-news" style="display:inline-block;position:relative;">
+                              <?php if ($videoThumb): ?>
+                              <img class="img-fluid rounded" src="<?= htmlspecialchars($videoThumb) ?>" alt="Vídeo">
+                              <?php elseif (!empty($news['featured_image'])): ?>
+                              <img class="img-fluid rounded" src="/<?= htmlspecialchars($news['featured_image']) ?>" alt="Vídeo">
+                              <?php endif; ?>
+                              <span class="video-play-btn"><i class="fas fa-play"></i></span>
+                           </a>
                         </div>
                         <?php endif; endif; ?>
 
@@ -183,6 +190,9 @@ if ($news) {
          type: 'image',
          gallery: { enabled: true },
          zoom: { enabled: true, duration: 300 }
+      });
+      $('.video-popup-news').magnificPopup({
+         type: 'iframe'
       });
    </script>
 </body>

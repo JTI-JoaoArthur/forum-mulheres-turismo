@@ -130,19 +130,23 @@ $mesesPt = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','D
         <div class="swiper-wrapper">
             <?php foreach ($carouselSlides as $slide):
                 $videoEmbed = '';
+                $videoThumb = '';
                 if (!empty($slide['video_url'])) {
                     if (preg_match('#(?:youtube\.com/watch\?v=|youtu\.be/)([\w-]+)#', $slide['video_url'], $m)) {
-                        $videoEmbed = 'https://www.youtube.com/embed/' . $m[1] . '?autoplay=0&rel=0';
+                        $videoEmbed = 'https://www.youtube.com/embed/' . $m[1] . '?autoplay=1&rel=0';
+                        $videoThumb = 'https://img.youtube.com/vi/' . $m[1] . '/maxresdefault.jpg';
                     } elseif (preg_match('#vimeo\.com/(\d+)#', $slide['video_url'], $m)) {
-                        $videoEmbed = 'https://player.vimeo.com/video/' . $m[1];
+                        $videoEmbed = 'https://player.vimeo.com/video/' . $m[1] . '?autoplay=1';
                     }
                 }
+                $thumbSrc = !empty($slide['image']) ? '/' . htmlspecialchars($slide['image']) : ($videoThumb ?: '');
             ?>
             <div class="swiper-slide"<?= !empty($slide['link']) && !$videoEmbed ? ' data-href="' . htmlspecialchars($slide['link']) . '"' : '' ?>>
-                <?php if ($videoEmbed): ?>
-                <div class="embed-responsive embed-responsive-16by9">
-                    <iframe class="embed-responsive-item" src="<?= htmlspecialchars($videoEmbed) ?>" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                </div>
+                <?php if ($videoEmbed && $thumbSrc): ?>
+                <a href="<?= htmlspecialchars($videoEmbed) ?>" class="video-popup" style="display:block;width:100%;position:relative;">
+                    <img src="<?= $thumbSrc ?>" alt="Vídeo" style="width:100%;height:auto;display:block;">
+                    <span class="video-play-btn"><i class="fas fa-play"></i></span>
+                </a>
                 <?php elseif (!empty($slide['image'])): ?>
                 <img src="/<?= htmlspecialchars($slide['image']) ?>" alt="Slide do carrossel" style="width:100%;height:auto;display:block;">
                 <?php endif; ?>

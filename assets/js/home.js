@@ -14,27 +14,27 @@ if (slides.length > 0) {
             nextEl: "#carrossel-destaques .swiper-button-next",
             prevEl: "#carrossel-destaques .swiper-button-prev"
         },
-        pagination: { el: "#carrossel-destaques .swiper-pagination", clickable: true },
-        on: {
-            slideChangeTransitionEnd: function() {
-                var active = this.slides[this.activeIndex];
-                if (active && active.querySelector("iframe")) {
-                    this.autoplay.stop();
-                } else {
-                    this.autoplay.start();
-                }
-            }
-        }
+        pagination: { el: "#carrossel-destaques .swiper-pagination", clickable: true }
     });
     slides.forEach(function(e) {
         var a = e.getAttribute("data-href");
         if (a) {
             e.style.cursor = "pointer";
             e.addEventListener("click", function(ev) {
-                if (!ev.target.closest(".swiper-button-next, .swiper-button-prev, iframe")) {
+                if (!ev.target.closest(".swiper-button-next, .swiper-button-prev, .video-popup")) {
                     window.location.href = a;
                 }
             });
+        }
+    });
+    // Magnific Popup para vídeos no carrossel
+    $(".video-popup").magnificPopup({
+        type: "iframe",
+        iframe: {
+            patterns: {
+                youtube: { index: "youtube.com/embed/", src: "%id%?autoplay=1&rel=0" },
+                vimeo: { index: "player.vimeo.com/video/", src: "%id%?autoplay=1" }
+            }
         }
     });
 } else if (carrosselEl) {
