@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540">
+  <defs>
+    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7a52a8"/>
+      <stop offset="100%" stop-color="#5a3a7a"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="url(#g2)"/>
+  <!-- Grupo de pessoas (networking) -->
+  <circle cx="380" cy="220" r="24" fill="rgba(255,255,255,0.12)"/>
+  <rect x="362" y="248" width="36" height="50" rx="5" fill="rgba(255,255,255,0.09)"/>
+  <circle cx="480" cy="210" r="26" fill="rgba(255,255,255,0.14)"/>
+  <rect x="460" y="240" width="40" height="55" rx="5" fill="rgba(255,255,255,0.11)"/>
+  <circle cx="580" cy="220" r="24" fill="rgba(255,255,255,0.12)"/>
+  <rect x="562" y="248" width="36" height="50" rx="5" fill="rgba(255,255,255,0.09)"/>
+  <!-- Linhas de conexão -->
+  <line x1="404" y1="240" x2="456" y2="230" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+  <line x1="504" y1="230" x2="556" y2="240" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+  <!-- Mesa -->
+  <rect x="340" y="310" width="280" height="6" rx="3" fill="rgba(255,255,255,0.07)"/>
+  <text x="480" y="400" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="600" fill="rgba(255,255,255,0.18)" letter-spacing="4">NETWORKING</text>
+</svg>

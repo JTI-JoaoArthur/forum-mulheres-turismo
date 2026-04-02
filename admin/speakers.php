@@ -67,10 +67,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 Auth::log(Auth::user()['id'], 'speaker_updated', "Palestrante #{$id}: {$data['name']}");
                 $_SESSION['flash_message'] = 'Palestrante atualizado(a) com sucesso.';
             } else {
-                $newId = Database::insert('speakers', $data);
-                Auth::log(Auth::user()['id'], 'speaker_created', "Palestrante #{$newId}: {$data['name']}");
+                $id = Database::insert('speakers', $data);
+                Auth::log(Auth::user()['id'], 'speaker_created', "Palestrante #{$id}: {$data['name']}");
                 $_SESSION['flash_message'] = 'Palestrante cadastrado(a) com sucesso.';
             }
+
+            // Salvar vínculos com programação
+            Database::delete('schedule_speakers', 'speaker_id = ?', [$id]);
+            $scheduleIds = $_POST['schedule_items'] ?? [];
+            foreach ($scheduleIds as $scId) {
+                $scId = (int) $scId;
+                if ($scId > 0) {
+                    Database::insert('schedule_speakers', [
+                        'schedule_id' => $scId,
+                        'speaker_id'  => $id,
+                    ]);
+                }
+            }
+
             $_SESSION['flash_type'] = 'success';
             header('Location: /admin/speakers.php');
             exit;
@@ -121,9 +135,16 @@ if ($message): ?>
 // ── Formulário (criar/editar) ───────────────────────────────────────
 if ($action === 'form'):
     $speaker = $id ? Database::fetchOne("SELECT * FROM speakers WHERE id = ?", [$id]) : null;
+    $dayLabels = [1 => '3 de Junho', 2 => '4 de Junho'];
+    $allSchedule = Database::fetchAll("SELECT * FROM schedule WHERE is_visible = 1 ORDER BY day ASC, start_time ASC");
+    $linkedScheduleIds = [];
+    if ($id) {
+        $links = Database::fetchAll("SELECT schedule_id FROM schedule_speakers WHERE speaker_id = ?", [$id]);
+        foreach ($links as $l) $linkedScheduleIds[] = (int) $l['schedule_id'];
+    }
 ?>
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><?= $speaker ? 'Editar' : 'Nova' ?> Palestrante</h2>
+        <h2><?= $speaker ? 'Editar' : 'Novo' ?> Palestrante</h2>
         <a href="/admin/speakers.php" class="btn btn-outline-secondary btn-sm">Voltar</a>
     </div>
 
@@ -187,7 +208,7 @@ if ($action === 'form'):
                             <label for="photo">Foto</label>
                             <input type="file" class="form-control-file" id="photo" name="photo"
                                    accept="image/jpeg,image/png,image/webp" data-preview="photoPreview">
-                            <small class="form-text text-muted">JPG, PNG ou WebP. Máx. 5 MB.</small>
+                            <small class="form-text text-muted">Recomendado: 400x400 (1:1, quadrada). JPG, PNG ou WebP. Máx. 15 MB.</small>
                             <?php if (!empty($speaker['photo'])): ?>
                                 <img src="/<?= htmlspecialchars($speaker['photo']) ?>" id="photoPreview" class="upload-preview mt-2">
                             <?php else: ?>
@@ -212,6 +233,37 @@ if ($action === 'form'):
                     </div>
                 </div>
 
+                <?php if (!empty($allSchedule)): ?>
+                <div class="form-group mb-3">
+                    <label><i class="fas fa-calendar-alt"></i> Programação vinculada</label>
+                    <div class="row">
+                        <?php
+                        $currentDay = 0;
+                        foreach ($allSchedule as $sc):
+                            if ($sc['day'] !== $currentDay):
+                                $currentDay = $sc['day'];
+                        ?>
+                        <div class="col-12 mt-2 mb-1"><small class="text-muted font-weight-bold"><?= $dayLabels[$currentDay] ?? 'Dia ' . $currentDay ?></small></div>
+                        <?php endif; ?>
+                        <div class="col-md-6">
+                            <div class="form-check mb-2">
+                                <input type="checkbox" class="form-check-input" name="schedule_items[]"
+                                       value="<?= $sc['id'] ?>" id="sc_<?= $sc['id'] ?>"
+                                       <?= in_array($sc['id'], $linkedScheduleIds) ? 'checked' : '' ?>>
+                                <label class="form-check-label" for="sc_<?= $sc['id'] ?>">
+                                    <strong><?= htmlspecialchars($sc['start_time']) ?>–<?= htmlspecialchars($sc['end_time']) ?></strong>
+                                    <?= htmlspecialchars($sc['title']) ?>
+                                    <?php if ($sc['location']): ?>
+                                    <small class="text-muted"> — <?= htmlspecialchars($sc['location']) ?></small>
+                                    <?php endif; ?>
+                                </label>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+
                 <hr>
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-save"></i> <?= $speaker ? 'Salvar Alterações' : 'Cadastrar Palestrante' ?>
@@ -228,14 +280,14 @@ else:
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Palestrantes <small class="text-muted">(<?= count($speakers) ?>)</small></h2>
         <a href="/admin/speakers.php?action=form" class="btn btn-primary btn-sm">
-            <i class="fas fa-plus"></i> Nova Palestrante
+            <i class="fas fa-plus"></i> Novo Palestrante
         </a>
     </div>
 
     <div class="card">
         <div class="card-body p-0">
             <?php if (empty($speakers)): ?>
-                <p class="text-muted p-4">Nenhuma palestrante cadastrada. <a href="/admin/speakers.php?action=form">Cadastre a primeira</a>.</p>
+                <p class="text-muted p-4">Nenhum palestrante cadastrado. <a href="/admin/speakers.php?action=form">Cadastre o primeiro</a>.</p>
             <?php else: ?>
                 <table class="table table-hover mb-0">
                     <thead>

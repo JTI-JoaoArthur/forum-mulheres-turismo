@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'contact' => ['contact_city', 'contact_venue', 'contact_phone', 'contact_hours', 'contact_email', 'contact_email_desc', 'maps_query'],
         'footer' => ['footer_about', 'footer_location', 'footer_date'],
         'social' => ['social_instagram', 'social_facebook', 'social_twitter', 'social_youtube', 'social_linkedin'],
+        'instagram_feed' => ['instagram_access_token'],
         'form' => ['form_recipient', 'form_sender'],
         'event' => ['site_title', 'event_date'],
     ];
@@ -32,6 +33,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         foreach ($settingsMap[$section] as $key) {
             if (isset($_POST[$key])) {
                 Database::setSetting($key, trim($_POST[$key]));
+            }
+        }
+
+        // Ao salvar token do Instagram, registrar data e limpar cache
+        if ($section === 'instagram_feed') {
+            $newToken = trim($_POST['instagram_access_token'] ?? '');
+            if ($newToken !== '') {
+                Database::setSetting('instagram_token_saved_at', date('Y-m-d H:i:s'));
+                Database::setSetting('instagram_cache', null);
+                Database::setSetting('instagram_cache_updated_at', null);
+            } else {
+                Database::setSetting('instagram_token_saved_at', null);
             }
         }
 
@@ -138,10 +151,14 @@ if ($message): ?>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group mb-3">
-                        <label>Data do evento (para countdown)</label>
-                        <input type="text" class="form-control" name="event_date" value="<?= $s('event_date') ?>"
-                               placeholder="June 3, 2026 09:00:00">
-                        <small class="form-text text-muted">Formato: "June 3, 2026 09:00:00"</small>
+                        <label>Data e hora do evento (para contagem regressiva)</label>
+                        <?php
+                        $evDate = $s('event_date');
+                        // Converter formato antigo (English) para datetime-local se necessário
+                        $evTs = strtotime($evDate);
+                        $evVal = $evTs ? date('Y-m-d\TH:i', $evTs) : '2026-06-03T09:00';
+                        ?>
+                        <input type="datetime-local" class="form-control" name="event_date" value="<?= $evVal ?>">
                     </div>
                 </div>
             </div>
@@ -166,7 +183,7 @@ if ($message): ?>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group mb-3">
-                        <label>Local / Venue</label>
+                        <label>Local do Evento</label>
                         <input type="text" class="form-control" name="contact_venue" value="<?= $s('contact_venue') ?>">
                     </div>
                 </div>
@@ -226,6 +243,48 @@ if ($message): ?>
                 <?php endforeach; ?>
             </div>
             <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Salvar Redes Sociais</button>
+        </form>
+    </div>
+</div>
+
+<!-- Instagram Feed (API) -->
+<div class="card mb-4">
+    <div class="card-header"><h6 class="mb-0"><i class="fab fa-instagram"></i> Instagram Feed</h6></div>
+    <div class="card-body">
+        <form method="post">
+            <?= CSRF::field() ?>
+            <input type="hidden" name="section" value="instagram_feed">
+            <div class="form-group mb-3">
+                <label>Token de Acesso (Instagram Graph API)</label>
+                <textarea class="form-control" name="instagram_access_token" rows="3" placeholder="Cole aqui o token gerado no Meta Developer Portal"><?= $s('instagram_access_token') ?></textarea>
+                <small class="form-text text-muted">
+                    Gere em: Meta Developer Portal &rarr; Apps &rarr; Instagram &rarr; Configuração da API &rarr; Gerar Token.
+                    O token expira em 60 dias.
+                </small>
+            </div>
+            <?php
+            $igSavedAt = $settings['instagram_token_saved_at'] ?? null;
+            if ($igSavedAt):
+                $igExpires = strtotime($igSavedAt) + (60 * 86400);
+                $igDaysLeft = max(0, (int) ceil(($igExpires - time()) / 86400));
+                $igBadgeClass = $igDaysLeft > 14 ? 'badge-success' : ($igDaysLeft > 7 ? 'badge-warning' : 'badge-danger');
+            ?>
+            <div class="mb-3">
+                <span class="badge <?= $igBadgeClass ?>" style="font-size: 14px; padding: 6px 12px;">
+                    <i class="fas fa-clock"></i>
+                    <?php if ($igDaysLeft === 0): ?>
+                        Token expirado!
+                    <?php else: ?>
+                        <?= $igDaysLeft ?> dia<?= $igDaysLeft !== 1 ? 's' : '' ?> restante<?= $igDaysLeft !== 1 ? 's' : '' ?>
+                    <?php endif; ?>
+                </span>
+                <small class="text-muted ml-2">
+                    Salvo em <?= date('d/m/Y H:i', strtotime($igSavedAt)) ?> &mdash;
+                    expira em <?= date('d/m/Y', $igExpires) ?>
+                </small>
+            </div>
+            <?php endif; ?>
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Salvar</button>
         </form>
     </div>
 </div>

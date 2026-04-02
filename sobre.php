@@ -4,9 +4,11 @@ require_once __DIR__ . '/includes/album.php';
 
 $aboutTitle = siteRaw('about_title') ?: 'Fórum de Mulheres no Turismo';
 $aboutBody  = siteRaw('about_body');
-$aboutImg1  = siteRaw('about_image1') ?: 'assets/img/galeria/about1.png';
-$aboutImg2  = siteRaw('about_image2') ?: 'assets/img/galeria/about2.png';
-$albumPhotos = getAlbumPhotos();
+$aboutImg1  = siteRaw('about_image1') ?: 'assets/img/galeria/about1.svg';
+$aboutImg2  = siteRaw('about_image2') ?: 'assets/img/galeria/about2.svg';
+$albumData = getAlbumPhotos();
+$albumPhotos = $albumData['photos'];
+$albumRealCount = $albumData['realCount'];
 ?>
 <!doctype html>
 <html class="no-js" lang="pt-BR">
@@ -39,7 +41,8 @@ $albumPhotos = getAlbumPhotos();
     <link rel="stylesheet" href="assets/css/slick.css">
     <link rel="stylesheet" href="assets/css/nice-select.css">
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/custom.min.css">
+    <link rel="stylesheet" href="assets/css/custom.min.css?v=20260401c">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" integrity="sha384-gAPqlBuTCdtVcYt9ocMOYWrnBZ4XSL6q+4eXqwNycOr4iFczhNKtnYhF3NEXJM51" crossorigin="anonymous">
 </head>
 <body>
 <?php require __DIR__ . '/includes/header.php'; ?>
@@ -74,16 +77,16 @@ $albumPhotos = getAlbumPhotos();
                         <?php endif; ?>
                     </div>
                     <div class="row">
-                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-10">
-                            <div class="single-caption mb-20">
+                        <div class="col-12 col-sm-6">
+                            <a href="contato.php#mapa" class="single-caption mb-20" style="text-decoration:none;color:inherit;">
                                 <div class="caption-icon"><i class="fas fa-map-marker-alt"></i></div>
                                 <div class="caption">
                                     <h5>Local</h5>
                                     <p><?= site('contact_venue') ?></p>
                                 </div>
-                            </div>
+                            </a>
                         </div>
-                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-10">
+                        <div class="col-12 col-sm-6">
                             <div class="single-caption mb-20">
                                 <div class="caption-icon"><i class="fas fa-calendar-alt"></i></div>
                                 <div class="caption">
@@ -98,10 +101,10 @@ $albumPhotos = getAlbumPhotos();
                 <div class="col-lg-6 col-md-12">
                     <div class="about-img">
                         <div class="about-font-img d-none d-lg-block">
-                            <img src="<?= htmlspecialchars($aboutImg2) ?>" alt="Participantes do <?= site('site_title') ?>">
+                            <img class="img-fluid" src="<?= htmlspecialchars($aboutImg2) ?>" alt="Participantes do <?= site('site_title') ?>">
                         </div>
                         <div class="about-back-img">
-                            <img src="<?= htmlspecialchars($aboutImg1) ?>" alt="Plenário do <?= site('site_title') ?>">
+                            <img class="img-fluid" src="<?= htmlspecialchars($aboutImg1) ?>" alt="Plenário do <?= site('site_title') ?>">
                         </div>
                     </div>
                 </div>
@@ -109,53 +112,101 @@ $albumPhotos = getAlbumPhotos();
         </div>
     </section>
 
-    <div class="gallery-area fix" id="album-fotos">
-        <div class="container-fluid p-0">
-            <div class="row no-gutters">
-                <?php
-                $slotSizes = ['col-lg-3 col-md-3 col-sm-6','col-lg-3 col-md-3 col-sm-6','col-lg-6 col-md-6 col-sm-6','col-lg-6 col-md-6 col-sm-6','col-lg-3 col-md-3 col-sm-6','col-lg-3 col-md-3 col-sm-6'];
-                for ($i = 0; $i < 6; $i++):
-                    $img = $albumPhotos[$i % count($albumPhotos)];
-                ?>
-                <div class="<?= $slotSizes[$i] ?>">
-                    <div class="gallery-box">
-                        <div class="single-gallery">
-                            <a href="<?= htmlspecialchars($img) ?>" class="album-popup">
-                                <div class="gallery-img gallery-slot" data-slot="<?= $i ?>" style="background-image: url(<?= htmlspecialchars($img) ?>);"></div>
-                            </a>
-                        </div>
+    <!-- Galeria de Fotos -->
+    <?php if (!empty($albumPhotos)): ?>
+    <section style="background: #f8f6fb; padding: 30px 0 0;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-5 col-md-8">
+                    <div class="section-tittle text-center mb-50">
+                        <h2>Galeria de Fotos</h2>
                     </div>
                 </div>
-                <?php endfor; ?>
+            </div>
+            <div class="gallery-carousel">
+                <!-- Carrossel principal -->
+                <div class="swiper galleryMain">
+                    <div class="swiper-wrapper">
+                        <?php foreach ($albumPhotos as $i => $img): ?>
+                        <div class="swiper-slide">
+                            <div class="gallery-main-slide">
+                                <img src="<?= htmlspecialchars($img) ?>" alt="Foto <?= $i + 1 ?> do <?= site('site_title') ?>" loading="lazy">
+                                <span class="gallery-counter"><?= $i + 1 ?> / <?= count($albumPhotos) ?></span>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php if (count($albumPhotos) > 1): ?>
+                    <div class="swiper-button-next gallery-nav" aria-label="Próxima foto"></div>
+                    <div class="swiper-button-prev gallery-nav" aria-label="Foto anterior"></div>
+                    <?php endif; ?>
+                </div>
+                <?php if (count($albumPhotos) > 1): ?>
+                <!-- Thumbnails -->
+                <div class="swiper galleryThumbs mt-3">
+                    <div class="swiper-wrapper">
+                        <?php foreach ($albumPhotos as $i => $img): ?>
+                        <div class="swiper-slide">
+                            <img src="<?= htmlspecialchars($img) ?>" alt="" class="gallery-thumb-img" loading="lazy">
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
-    </div>
+    </section>
+    <?php endif; ?>
 </main>
 <?php require __DIR__ . '/includes/footer.php'; ?>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" integrity="sha384-2UI1PfnXFjVMQ7/ZDEF70CR943oH3v6uZrFQGGqJYlvhh4g6z6uVktxYbOlAczav" crossorigin="anonymous"></script>
     <script>
-        var albumFotos = <?= json_encode(array_values($albumPhotos)) ?>;
-        (function initAlbumSequencial() {
-            var slots = document.querySelectorAll('.gallery-slot');
-            if (!slots.length || albumFotos.length < 2) return;
-            var INTERVALO = 3000, slotAtual = 0, indices = [];
-            for (var i = 0; i < slots.length; i++) indices.push(i % albumFotos.length);
-            function trocarProximo() {
-                indices[slotAtual] = (indices[slotAtual] + 1) % albumFotos.length;
-                var novaImg = albumFotos[indices[slotAtual]];
-                slots[slotAtual].style.backgroundImage = 'url(' + novaImg + ')';
-                var link = slots[slotAtual].closest('.album-popup');
-                if (link) link.setAttribute('href', novaImg);
-                slotAtual = (slotAtual + 1) % slots.length;
-            }
-            setInterval(trocarProximo, INTERVALO);
-        })();
-        $(document).ready(function() {
-            $('.album-popup').magnificPopup({
-                type: 'image',
-                gallery: { enabled: true, tCounter: '%curr% de %total%' },
-                image: { titleSrc: function() { return 'Álbum de Fotos — <?= site('site_title') ?>'; } }
+    (function() {
+        var mainEl = document.querySelector('.galleryMain');
+        if (!mainEl) return;
+
+        var thumbsEl = document.querySelector('.galleryThumbs');
+        var thumbsSwiper = null;
+        var mainOpts = {
+            spaceBetween: 0,
+        };
+
+        if (thumbsEl) {
+            thumbsSwiper = new Swiper('.galleryThumbs', {
+                spaceBetween: 8,
+                slidesPerView: 'auto',
+                freeMode: true,
+                watchSlidesProgress: true,
             });
+            mainOpts.loop = true;
+            mainOpts.autoplay = { delay: 5000, disableOnInteraction: true };
+            mainOpts.navigation = {
+                nextEl: '.galleryMain .swiper-button-next',
+                prevEl: '.galleryMain .swiper-button-prev',
+            };
+            mainOpts.thumbs = { swiper: thumbsSwiper };
+        }
+
+        var mainSwiper = new Swiper('.galleryMain', mainOpts);
+
+        if (thumbsEl) {
+            mainEl.addEventListener('mouseenter', function() { mainSwiper.autoplay.stop(); });
+            mainEl.addEventListener('mouseleave', function() { mainSwiper.autoplay.start(); });
+        }
+
+        // Fullscreen ao clicar na imagem
+        mainEl.addEventListener('click', function(e) {
+            if (e.target.closest('.swiper-button-next, .swiper-button-prev')) return;
+            var img = e.target.closest('.gallery-main-slide img');
+            if (!img) return;
+            $.magnificPopup.open({
+                items: <?= json_encode(array_map(fn($p) => ['src' => $p, 'type' => 'image'], $albumPhotos)) ?>,
+                type: 'image',
+                gallery: { enabled: <?= count($albumPhotos) > 1 ? 'true' : 'false' ?>, tCounter: '%curr% de %total%' },
+                image: { titleSrc: function() { return 'Galeria — <?= site('site_title') ?>'; } }
+            }, mainSwiper.realIndex || 0);
         });
+    })();
     </script>
 </body>
 </html>

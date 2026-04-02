@@ -46,11 +46,11 @@
                                 <p>Acompanhe as novidades do evento nas redes sociais.</p>
                             </div>
                             <div class="footer-social mt-15">
-                                <?php if (siteRaw('social_instagram')): ?><a href="<?= site('social_instagram') ?>" target="_blank"><i class="fab fa-instagram"></i></a><?php endif; ?>
-                                <?php if (siteRaw('social_facebook')): ?><a href="<?= site('social_facebook') ?>" target="_blank"><i class="fab fa-facebook-f"></i></a><?php endif; ?>
-                                <?php if (siteRaw('social_twitter')): ?><a href="<?= site('social_twitter') ?>" target="_blank"><i class="icon-x"></i></a><?php endif; ?>
-                                <?php if (siteRaw('social_youtube')): ?><a href="<?= site('social_youtube') ?>" target="_blank"><i class="fab fa-youtube"></i></a><?php endif; ?>
-                                <?php if (siteRaw('social_linkedin')): ?><a href="<?= site('social_linkedin') ?>" target="_blank"><i class="fab fa-linkedin"></i></a><?php endif; ?>
+                                <?php if (siteRaw('social_instagram')): ?><a href="<?= site('social_instagram') ?>" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a><?php endif; ?>
+                                <?php if (siteRaw('social_facebook')): ?><a href="<?= site('social_facebook') ?>" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><?php endif; ?>
+                                <?php if (siteRaw('social_twitter')): ?><a href="<?= site('social_twitter') ?>" target="_blank" rel="noopener" aria-label="X (Twitter)"><i class="icon-x"></i></a><?php endif; ?>
+                                <?php if (siteRaw('social_youtube')): ?><a href="<?= site('social_youtube') ?>" target="_blank" rel="noopener" aria-label="YouTube"><i class="fab fa-youtube"></i></a><?php endif; ?>
+                                <?php if (siteRaw('social_linkedin')): ?><a href="<?= site('social_linkedin') ?>" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a><?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -74,7 +74,7 @@
 </footer>
 
 <div id="back-top">
-    <a title="Voltar ao Topo" href="#"><i class="fas fa-level-up-alt"></i></a>
+    <a title="Voltar ao Topo" href="#" aria-label="Voltar ao topo"><i class="fas fa-level-up-alt"></i></a>
 </div>
 
 <script src="./assets/js/vendor/modernizr-3.5.0.min.js"></script>

@@ -6,6 +6,24 @@ if (dbReady()) {
     $day1 = Database::fetchAll("SELECT * FROM schedule WHERE day = 1 AND is_visible = 1 ORDER BY display_order ASC, start_time ASC");
     $day2 = Database::fetchAll("SELECT * FROM schedule WHERE day = 2 AND is_visible = 1 ORDER BY display_order ASC, start_time ASC");
 }
+$day1Blocks = groupByTimeSlot($day1);
+$day2Blocks = groupByTimeSlot($day2);
+
+// Dia ativo: dia 2 se já passou o dia 3 ou todas as atividades do dia 1
+$eventDay1 = '2026-06-03';
+$eventDay2 = '2026-06-04';
+$nowDate = date('Y-m-d');
+$nowTime = date('H:i');
+$activeDay = 1;
+if ($nowDate >= $eventDay2) {
+    $activeDay = 2;
+} elseif ($nowDate === $eventDay1) {
+    $lastEnd = '';
+    foreach ($day1 as $item) {
+        if ($item['end_time'] > $lastEnd) $lastEnd = $item['end_time'];
+    }
+    if ($lastEnd && $nowTime > $lastEnd) $activeDay = 2;
+}
 ?>
 <!doctype html>
 <html class="no-js" lang="pt-BR">
@@ -38,7 +56,7 @@ if (dbReady()) {
     <link rel="stylesheet" href="assets/css/slick.css">
     <link rel="stylesheet" href="assets/css/nice-select.css">
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/custom.min.css">
+    <link rel="stylesheet" href="assets/css/custom.min.css?v=20260401c">
 </head>
 <body>
 <?php require __DIR__ . '/includes/header.php'; ?>
@@ -57,7 +75,7 @@ if (dbReady()) {
         </div>
     </div>
 
-    <section class="accordion fix section-padding30">
+    <section class="fix section-padding30">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center mb-40">
@@ -65,68 +83,80 @@ if (dbReady()) {
                     <p><?= site('contact_venue') ?> — <?= site('footer_date') ?></p>
                 </div>
             </div>
-            <div class="row">
+            <div class="row justify-content-center">
                <div class="col-lg-11">
                     <div class="properties__button mb-40">
                         <nav aria-label="Abas de programação">
                             <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Dia 1 — 3 de Junho</a>
-                                <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Dia 2 — 4 de Junho</a>
+                                <a class="nav-item nav-link<?= $activeDay === 1 ? ' active' : '' ?>" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="<?= $activeDay === 1 ? 'true' : 'false' ?>">3 de Junho</a>
+                                <a class="nav-item nav-link<?= $activeDay === 2 ? ' active' : '' ?>" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="<?= $activeDay === 2 ? 'true' : 'false' ?>">4 de Junho</a>
                             </div>
                         </nav>
                     </div>
                </div>
             </div>
-        </div>
-        <div class="container">
             <div class="tab-content" id="nav-tabContent">
-                <?php foreach ([1 => $day1, 2 => $day2] as $dayNum => $items): ?>
-                <div class="tab-pane fade<?= $dayNum === 1 ? ' show active' : '' ?>" id="<?= $dayNum === 1 ? 'nav-home' : 'nav-profile' ?>" role="tabpanel">
-                   <div class="row">
-                        <div class="col-lg-11">
-                            <div class="accordion-wrapper">
-                                <div class="accordion" id="accordionDia<?= $dayNum ?>">
-                                    <?php if (empty($items)): ?>
-                                    <div class="card programacao-item programacao-default">
-                                        <div class="card-header" id="headingDefaultS<?= $dayNum ?>">
-                                            <h2 class="mb-0">
-                                                <a href="#" class="btn-link" data-toggle="collapse" data-target="#collapseDefaultS<?= $dayNum ?>" aria-expanded="true">
-                                                    <span>00:00 - 00:00</span>
-                                                    <p>Nome da Atividade</p>
-                                                </a>
-                                            </h2>
-                                        </div>
-                                        <div id="collapseDefaultS<?= $dayNum ?>" class="collapse show" data-parent="#accordionDia<?= $dayNum ?>">
-                                            <div class="card-body">
-                                                <strong>Local:</strong> A definir<br>
-                                                Descrição da atividade será inserida aqui pelo CMS.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <?php else: ?>
-                                        <?php foreach ($items as $idx => $item): ?>
-                                        <div class="card">
-                                            <div class="card-header" id="headingS<?= $dayNum ?>_<?= $item['id'] ?>">
-                                                <h2 class="mb-0">
-                                                    <a href="#" class="btn-link<?= $idx > 0 ? ' collapsed' : '' ?>" data-toggle="collapse" data-target="#collapseS<?= $dayNum ?>_<?= $item['id'] ?>" aria-expanded="<?= $idx === 0 ? 'true' : 'false' ?>">
-                                                        <span><?= htmlspecialchars($item['start_time']) ?> - <?= htmlspecialchars($item['end_time']) ?></span>
-                                                        <p><?= htmlspecialchars($item['title']) ?></p>
-                                                    </a>
-                                                </h2>
-                                            </div>
-                                            <div id="collapseS<?= $dayNum ?>_<?= $item['id'] ?>" class="collapse<?= $idx === 0 ? ' show' : '' ?>" data-parent="#accordionDia<?= $dayNum ?>">
-                                                <div class="card-body">
-                                                    <?php if ($item['location']): ?><strong>Local:</strong> <?= htmlspecialchars($item['location']) ?><br><?php endif; ?>
-                                                    <?= htmlspecialchars($item['description'] ?: '') ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
+                <?php foreach ([1 => $day1Blocks, 2 => $day2Blocks] as $dayNum => $blocks): ?>
+                <div class="tab-pane fade<?= $dayNum === $activeDay ? ' show active' : '' ?>" id="<?= $dayNum === 1 ? 'nav-home' : 'nav-profile' ?>" role="tabpanel">
+                    <div class="schedule-timeline">
+                        <?php if (empty($blocks)): ?>
+                        <div class="time-block">
+                            <div class="time-block__time">
+                                <span class="time-block__start">00:00</span>
+                                <span class="time-block__separator">—</span>
+                                <span class="time-block__end">00:00</span>
+                            </div>
+                            <div class="time-block__sessions single-track">
+                                <div class="session-card programacao-default">
+                                    <span class="session-card__location"><i class="fas fa-map-marker-alt"></i> A definir</span>
+                                    <h4 class="session-card__title">Nome da Atividade</h4>
+                                    <p class="session-card__description">Descrição da atividade será inserida aqui pelo CMS.</p>
                                 </div>
                             </div>
                         </div>
-                   </div>
+                        <?php else: ?>
+                            <?php foreach ($blocks as $block): ?>
+                            <div class="time-block">
+                                <div class="time-block__time">
+                                    <span class="time-block__start"><?= htmlspecialchars($block['start']) ?></span>
+                                    <span class="time-block__separator">—</span>
+                                    <span class="time-block__end"><?= htmlspecialchars($block['end']) ?></span>
+                                </div>
+                                <div class="time-block__sessions<?= count($block['items']) === 1 ? ' single-track' : '' ?>">
+                                    <?php foreach ($block['items'] as $item):
+                                        $sessionSpeakers = getSpeakersForSchedule($item['id']);
+                                    ?>
+                                    <div class="session-card" <?php if (!empty($sessionSpeakers)): ?>data-speakers='<?= htmlspecialchars(json_encode(array_map(function($sp) {
+                                        return ['name' => $sp['name'], 'position' => $sp['position'], 'institution' => $sp['institution'], 'photo' => $sp['photo']];
+                                    }, $sessionSpeakers))) ?>' role="button" tabindex="0"<?php endif; ?>>
+                                        <?php if ($item['location']): ?>
+                                        <span class="session-card__location"><i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($item['location']) ?></span>
+                                        <?php endif; ?>
+                                        <h4 class="session-card__title"><?= htmlspecialchars($item['title']) ?></h4>
+                                        <?php if ($item['description']): ?>
+                                        <p class="session-card__description"><?= htmlspecialchars($item['description']) ?></p>
+                                        <?php endif; ?>
+                                        <?php if (!empty($sessionSpeakers)): ?>
+                                        <div class="session-card__speakers">
+                                            <?php foreach ($sessionSpeakers as $sp): ?>
+                                            <span class="session-speaker" title="<?= htmlspecialchars($sp['name']) ?>">
+                                                <?php if ($sp['photo']): ?>
+                                                <img src="/<?= htmlspecialchars($sp['photo']) ?>" alt="<?= htmlspecialchars($sp['name']) ?>">
+                                                <?php else: ?>
+                                                <i class="fas fa-user-circle"></i>
+                                                <?php endif; ?>
+                                                <span class="session-speaker__name"><?= htmlspecialchars($sp['name']) ?></span>
+                                            </span>
+                                            <?php endforeach; ?>
+                                        </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
                 </div>
                 <?php endforeach; ?>
             </div>

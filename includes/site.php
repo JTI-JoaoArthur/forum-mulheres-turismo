@@ -5,6 +5,8 @@
  * Se o banco não existir, usa valores padrão (site funciona sem admin).
  */
 
+date_default_timezone_set('America/Sao_Paulo');
+
 require_once __DIR__ . '/../admin/lib/Database.php';
 
 $_site = [];
@@ -96,6 +98,54 @@ function sanitizeHtml(string $html): string {
     }
 
     return $purifier->purify($html);
+}
+
+/**
+ * Agrupa itens da programação por bloco de horário (sessões simultâneas lado a lado).
+ */
+function groupByTimeSlot(array $items): array
+{
+    $blocks = [];
+    foreach ($items as $item) {
+        $key = $item['start_time'] . '-' . $item['end_time'];
+        if (!isset($blocks[$key])) {
+            $blocks[$key] = [
+                'start' => $item['start_time'],
+                'end'   => $item['end_time'],
+                'items' => [],
+            ];
+        }
+        $blocks[$key]['items'][] = $item;
+    }
+    return array_values($blocks);
+}
+
+/**
+ * Retorna palestrantes vinculados a um item da programação.
+ */
+function getSpeakersForSchedule(int $scheduleId): array {
+    if (!dbReady()) return [];
+    return Database::fetchAll(
+        "SELECT s.* FROM speakers s
+         INNER JOIN schedule_speakers ss ON ss.speaker_id = s.id
+         WHERE ss.schedule_id = ? AND s.is_visible = 1
+         ORDER BY s.name ASC",
+        [$scheduleId]
+    );
+}
+
+/**
+ * Retorna itens da programação vinculados a um palestrante.
+ */
+function getScheduleForSpeaker(int $speakerId): array {
+    if (!dbReady()) return [];
+    return Database::fetchAll(
+        "SELECT sc.* FROM schedule sc
+         INNER JOIN schedule_speakers ss ON ss.schedule_id = sc.id
+         WHERE ss.speaker_id = ? AND sc.is_visible = 1
+         ORDER BY sc.day ASC, sc.start_time ASC",
+        [$speakerId]
+    );
 }
 
 /**

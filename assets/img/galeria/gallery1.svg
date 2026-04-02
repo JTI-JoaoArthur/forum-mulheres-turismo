@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#5a3a7a"/>
+      <stop offset="100%" stop-color="#3d1f5c"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="url(#g1)"/>
+  <!-- Palco -->
+  <rect x="280" y="310" width="400" height="8" rx="4" fill="rgba(255,255,255,0.08)"/>
+  <!-- Pessoa no palco -->
+  <circle cx="480" cy="210" r="28" fill="rgba(255,255,255,0.12)"/>
+  <rect x="460" y="242" width="40" height="60" rx="6" fill="rgba(255,255,255,0.10)"/>
+  <!-- Microfone -->
+  <line x1="505" y1="250" x2="520" y2="230" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+  <circle cx="522" cy="226" r="5" fill="rgba(255,255,255,0.15)"/>
+  <!-- Plateia (silhuetas) -->
+  <circle cx="200" cy="420" r="14" fill="rgba(255,255,255,0.06)"/>
+  <circle cx="260" cy="430" r="14" fill="rgba(255,255,255,0.05)"/>
+  <circle cx="340" cy="425" r="14" fill="rgba(255,255,255,0.06)"/>
+  <circle cx="480" cy="435" r="14" fill="rgba(255,255,255,0.05)"/>
+  <circle cx="580" cy="420" r="14" fill="rgba(255,255,255,0.06)"/>
+  <circle cx="660" cy="430" r="14" fill="rgba(255,255,255,0.05)"/>
+  <circle cx="750" cy="425" r="14" fill="rgba(255,255,255,0.06)"/>
+  <text x="480" y="490" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="600" fill="rgba(255,255,255,0.18)" letter-spacing="4" text-transform="uppercase">PALESTRA</text>
+</svg>

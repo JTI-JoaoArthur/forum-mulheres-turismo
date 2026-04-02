@@ -37,7 +37,7 @@ if (dbReady()) {
     <link rel="stylesheet" href="assets/css/slick.css">
     <link rel="stylesheet" href="assets/css/nice-select.css">
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/custom.min.css">
+    <link rel="stylesheet" href="assets/css/custom.min.css?v=20260401c">
 </head>
 <body>
 <?php require __DIR__ . '/includes/header.php'; ?>
@@ -68,14 +68,14 @@ if (dbReady()) {
             </div>
             <div class="row">
                 <?php if (empty($speakers)): ?>
-                <div class="col-lg-4 col-md-4 col-sm-4 palestrante-item palestrante-default text-center">
+                <div class="col-6 col-sm-4 palestrante-col palestrante-item palestrante-default text-center">
                     <div class="single-team mb-30">
                         <div class="team-img">
-                            <img class="img-fluid d-block mx-auto w-100" src="assets/img/galeria/team1.png" alt="Palestrante">
+                            <img class="img-fluid d-block mx-auto w-100" src="assets/img/galeria/speaker-placeholder.svg" alt="Palestrante">
                             <ul class="team-social">
-                                <li data-social="linkedin"><a href="#"><i class="fab fa-linkedin"></i></a></li>
-                                <li data-social="instagram"><a href="#"><i class="fab fa-instagram"></i></a></li>
-                                <li data-social="site"><a href="#"><i class="fas fa-globe"></i></a></li>
+                                <li data-social="linkedin"><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a></li>
+                                <li data-social="instagram"><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a></li>
+                                <li data-social="site"><a href="#" aria-label="Site"><i class="fas fa-globe"></i></a></li>
                             </ul>
                         </div>
                         <div class="team-caption team-caption2">
@@ -85,26 +85,49 @@ if (dbReady()) {
                     </div>
                 </div>
                 <?php else: ?>
-                    <?php foreach ($speakers as $sp): ?>
-                    <div class="col-lg-4 col-md-4 col-sm-4 text-center">
-                        <div class="single-team mb-30">
+                    <?php foreach ($speakers as $sp):
+                        $spSchedule = getScheduleForSpeaker($sp['id']);
+                        $dayLabels = [1 => '3 de Junho', 2 => '4 de Junho'];
+                    ?>
+                    <div class="col-6 col-sm-4 palestrante-col text-center">
+                        <div class="single-team mb-30<?= !empty($spSchedule) ? ' has-schedule' : '' ?>" <?php if (!empty($spSchedule)): ?>role="button" tabindex="0" data-toggle-schedule="<?= $sp['id'] ?>"<?php endif; ?>>
                             <div class="team-img">
                                 <?php if ($sp['photo']): ?>
                                     <img class="img-fluid d-block mx-auto w-100" src="/<?= htmlspecialchars($sp['photo']) ?>" alt="<?= htmlspecialchars($sp['name']) ?>">
                                 <?php else: ?>
-                                    <img class="img-fluid d-block mx-auto w-100" src="assets/img/galeria/team1.png" alt="<?= htmlspecialchars($sp['name']) ?>">
+                                    <img class="img-fluid d-block mx-auto w-100" src="assets/img/galeria/speaker-placeholder.svg" alt="<?= htmlspecialchars($sp['name']) ?>">
                                 <?php endif; ?>
                                 <ul class="team-social">
-                                    <?php if ($sp['linkedin']): ?><li data-social="linkedin"><a href="<?= htmlspecialchars($sp['linkedin']) ?>"><i class="fab fa-linkedin"></i></a></li><?php endif; ?>
-                                    <?php if ($sp['instagram']): ?><li data-social="instagram"><a href="<?= htmlspecialchars($sp['instagram']) ?>"><i class="fab fa-instagram"></i></a></li><?php endif; ?>
-                                    <?php if ($sp['website']): ?><li data-social="site"><a href="<?= htmlspecialchars($sp['website']) ?>"><i class="fas fa-globe"></i></a></li><?php endif; ?>
+                                    <?php if ($sp['linkedin']): ?><li data-social="linkedin"><a href="<?= htmlspecialchars($sp['linkedin']) ?>" aria-label="LinkedIn de <?= htmlspecialchars($sp['name']) ?>"><i class="fab fa-linkedin"></i></a></li><?php endif; ?>
+                                    <?php if ($sp['instagram']): ?><li data-social="instagram"><a href="<?= htmlspecialchars($sp['instagram']) ?>" aria-label="Instagram de <?= htmlspecialchars($sp['name']) ?>"><i class="fab fa-instagram"></i></a></li><?php endif; ?>
+                                    <?php if ($sp['website']): ?><li data-social="site"><a href="<?= htmlspecialchars($sp['website']) ?>" aria-label="Site de <?= htmlspecialchars($sp['name']) ?>"><i class="fas fa-globe"></i></a></li><?php endif; ?>
                                 </ul>
                             </div>
                             <div class="team-caption team-caption2">
                                 <h3><a href="#"><?= htmlspecialchars($sp['name']) ?></a></h3>
                                 <p><?= htmlspecialchars(($sp['position'] ?: '') . ($sp['institution'] ? ' / ' . $sp['institution'] : '')) ?></p>
+                                <?php if (!empty($spSchedule)): ?>
+                                <small class="text-muted"><i class="fas fa-calendar-alt"></i> <?= count($spSchedule) ?> atividade<?= count($spSchedule) > 1 ? 's' : '' ?></small>
+                                <?php endif; ?>
                             </div>
                         </div>
+                        <?php if (!empty($spSchedule)): ?>
+                        <div class="speaker-schedule-panel" id="schedule-<?= $sp['id'] ?>" style="display:none;">
+                            <div class="speaker-schedule-card">
+                                <h6><i class="fas fa-calendar-alt"></i> Programação de <?= htmlspecialchars($sp['name']) ?></h6>
+                                <?php foreach ($spSchedule as $sc): ?>
+                                <div class="speaker-schedule-item">
+                                    <span class="speaker-schedule-day"><?= $dayLabels[$sc['day']] ?? 'Dia ' . $sc['day'] ?></span>
+                                    <span class="speaker-schedule-time"><?= htmlspecialchars($sc['start_time']) ?> — <?= htmlspecialchars($sc['end_time']) ?></span>
+                                    <strong><?= htmlspecialchars($sc['title']) ?></strong>
+                                    <?php if ($sc['location']): ?>
+                                    <small class="text-muted d-block"><i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($sc['location']) ?></small>
+                                    <?php endif; ?>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                        <?php endif; ?>
                     </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -119,6 +142,28 @@ if (dbReady()) {
             if (!link || !link.getAttribute("href") || link.getAttribute("href") === "#") {
                 li.style.display = "none";
             }
+        });
+
+        // Toggle painel de programação do palestrante
+        document.querySelectorAll("[data-toggle-schedule]").forEach(function(el) {
+            el.addEventListener("click", function(e) {
+                // Não abrir se clicou num link social
+                if (e.target.closest(".team-social a")) return;
+                var id = this.getAttribute("data-toggle-schedule");
+                var panel = document.getElementById("schedule-" + id);
+                if (!panel) return;
+                // Fechar outros painéis abertos
+                document.querySelectorAll(".speaker-schedule-panel").forEach(function(p) {
+                    if (p !== panel) p.style.display = "none";
+                });
+                // Toggle com slide
+                if (panel.style.display === "none") {
+                    panel.style.display = "";
+                    panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                } else {
+                    panel.style.display = "none";
+                }
+            });
         });
     </script>
 </body>

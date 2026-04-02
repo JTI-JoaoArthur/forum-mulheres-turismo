@@ -27,6 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'website'       => trim($_POST['website'] ?? ''),
             'category'      => ($_POST['category'] ?? '') === 'realizacao' ? 'realizacao' : 'apoio',
             'display_order' => (int) ($_POST['display_order'] ?? 0),
+            'grid_row'      => max(1, min(4, (int) ($_POST['grid_row'] ?? 1))),
+            'grid_col'      => max(1, min(5, (int) ($_POST['grid_col'] ?? 1))),
             'is_visible'    => isset($_POST['is_visible']) ? 1 : 0,
         ];
 
@@ -48,14 +50,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (empty($errors)) {
+            // Resolver conflito de posição: se outro sponsor ocupa a mesma célula, trocar
+            $conflict = Database::fetchOne(
+                "SELECT id, name, grid_row, grid_col FROM sponsors WHERE grid_row = ? AND grid_col = ? AND is_visible = 1 AND id != ?",
+                [$data['grid_row'], $data['grid_col'], $id]
+            );
+            if ($conflict) {
+                if ($id > 0) {
+                    // Edição: trocar posições (swap)
+                    $current = Database::fetchOne("SELECT grid_row, grid_col FROM sponsors WHERE id = ?", [$id]);
+                    Database::query(
+                        "UPDATE sponsors SET grid_row = ?, grid_col = ? WHERE id = ?",
+                        [$current['grid_row'], $current['grid_col'], $conflict['id']]
+                    );
+                    $_SESSION['flash_message'] = "Parceiro salvo. Posição trocada com \"{$conflict['name']}\".";
+                } else {
+                    // Novo: empurrar o existente para a próxima posição livre
+                    $freePos = null;
+                    for ($r = 1; $r <= 4 && !$freePos; $r++) {
+                        for ($c = 1; $c <= 5 && !$freePos; $c++) {
+                            $occupied = Database::fetchOne(
+                                "SELECT id FROM sponsors WHERE grid_row = ? AND grid_col = ? AND is_visible = 1",
+                                [$r, $c]
+                            );
+                            if (!$occupied && !($r == $data['grid_row'] && $c == $data['grid_col'])) {
+                                $freePos = ['row' => $r, 'col' => $c];
+                            }
+                        }
+                    }
+                    if ($freePos) {
+                        Database::query(
+                            "UPDATE sponsors SET grid_row = ?, grid_col = ? WHERE id = ?",
+                            [$freePos['row'], $freePos['col'], $conflict['id']]
+                        );
+                        $_SESSION['flash_message'] = "Parceiro cadastrado. \"{$conflict['name']}\" movido para L{$freePos['row']}C{$freePos['col']}.";
+                    } else {
+                        $_SESSION['flash_message'] = 'Parceiro cadastrado (posição compartilhada — reorganize manualmente).';
+                    }
+                }
+            }
+
             if ($id > 0) {
                 Database::update('sponsors', $data, 'id = ?', [$id]);
                 Auth::log(Auth::user()['id'], 'sponsor_updated', "Parceiro #{$id}: {$data['name']}");
-                $_SESSION['flash_message'] = 'Parceiro atualizado com sucesso.';
+                if (!$conflict) $_SESSION['flash_message'] = 'Parceiro atualizado com sucesso.';
             } else {
                 $newId = Database::insert('sponsors', $data);
                 Auth::log(Auth::user()['id'], 'sponsor_created', "Parceiro #{$newId}: {$data['name']}");
-                $_SESSION['flash_message'] = 'Parceiro cadastrado com sucesso.';
+                if (!$conflict) $_SESSION['flash_message'] = 'Parceiro cadastrado com sucesso.';
             }
             $_SESSION['flash_type'] = 'success';
             header('Location: /admin/sponsors.php');
@@ -105,6 +147,13 @@ if ($message): ?>
 // ── Formulário ─────────────────────────────────────────────────────
 if ($action === 'form'):
     $sponsor = $id ? Database::fetchOne("SELECT * FROM sponsors WHERE id = ?", [$id]) : null;
+    // Mapa de posições ocupadas para a matriz visual
+    $occupiedPositions = [];
+    $allSponsors = Database::fetchAll("SELECT id, name, grid_row, grid_col FROM sponsors WHERE is_visible = 1");
+    foreach ($allSponsors as $s) {
+        $key = $s['grid_row'] . '_' . $s['grid_col'];
+        if ($s['id'] != $id) $occupiedPositions[$key] = $s['name'];
+    }
 ?>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><?= $sponsor ? 'Editar' : 'Novo' ?> Parceiro</h2>
@@ -134,11 +183,42 @@ if ($action === 'form'):
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-group mb-3">
                             <label for="display_order">Ordem</label>
                             <input type="number" class="form-control" id="display_order" name="display_order"
                                    value="<?= $sponsor['display_order'] ?? 0 ?>" min="0">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label>Posição na matriz</label>
+                            <input type="hidden" id="grid_row" name="grid_row" value="<?= $sponsor['grid_row'] ?? 1 ?>">
+                            <input type="hidden" id="grid_col" name="grid_col" value="<?= $sponsor['grid_col'] ?? 1 ?>">
+                            <table class="table table-bordered text-center mb-1" style="table-layout:fixed;font-size:11px;" id="position-matrix">
+                                <?php for ($r = 1; $r <= 4; $r++): ?>
+                                <tr>
+                                    <?php for ($c = 1; $c <= 5; $c++):
+                                        $key = $r . '_' . $c;
+                                        $isOccupied = isset($occupiedPositions[$key]);
+                                        $isCurrent = ($sponsor['grid_row'] ?? 1) == $r && ($sponsor['grid_col'] ?? 1) == $c;
+                                    ?>
+                                    <td data-row="<?= $r ?>" data-col="<?= $c ?>"
+                                        style="cursor:pointer;padding:6px 4px;<?= $isCurrent ? 'background:#64428c;color:#fff;font-weight:700;' : ($isOccupied ? 'background:#f0e6f6;color:#64428c;' : '') ?>"
+                                        title="<?= $isOccupied ? htmlspecialchars($occupiedPositions[$key]) : ($isCurrent ? 'Posição atual' : 'Livre') ?>">
+                                        <?php if ($isCurrent): ?>
+                                            <i class="fas fa-check"></i>
+                                        <?php elseif ($isOccupied): ?>
+                                            <?= htmlspecialchars(mb_substr($occupiedPositions[$key], 0, 12)) ?>
+                                        <?php else: ?>
+                                            <span class="text-muted">—</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <?php endfor; ?>
+                                </tr>
+                                <?php endfor; ?>
+                            </table>
+                            <small class="text-muted"><i class="fas fa-check"></i> = posição atual · Colorido = ocupado (será trocado) · — = livre</small>
                         </div>
                     </div>
                 </div>
@@ -156,7 +236,7 @@ if ($action === 'form'):
                             <label>Logo <?= $sponsor ? '' : '*' ?></label>
                             <input type="file" class="form-control-file" name="logo"
                                    accept="image/jpeg,image/png,image/webp" data-preview="logoPreview">
-                            <small class="form-text text-muted">PNG com fundo transparente recomendado. Máx. 5 MB.</small>
+                            <small class="form-text text-muted">PNG com fundo transparente recomendado. Máx. 15 MB.</small>
                             <?php if (!empty($sponsor['logo'])): ?>
                                 <img src="/<?= htmlspecialchars($sponsor['logo']) ?>" id="logoPreview" class="upload-preview mt-2" style="max-height:80px;background:#f8f9fa;padding:8px;border-radius:4px">
                             <?php else: ?>
@@ -179,6 +259,41 @@ if ($action === 'form'):
             </form>
         </div>
     </div>
+    <script>
+    (function() {
+        var matrix = document.getElementById('position-matrix');
+        var rowInput = document.getElementById('grid_row');
+        var colInput = document.getElementById('grid_col');
+        if (!matrix) return;
+
+        matrix.addEventListener('click', function(e) {
+            var td = e.target.closest('td[data-row]');
+            if (!td) return;
+            var r = td.getAttribute('data-row');
+            var c = td.getAttribute('data-col');
+            rowInput.value = r;
+            colInput.value = c;
+
+            // Atualizar visual
+            matrix.querySelectorAll('td').forEach(function(cell) {
+                var cr = cell.getAttribute('data-row');
+                var cc = cell.getAttribute('data-col');
+                if (cr === r && cc === c) {
+                    cell.style.background = '#64428c';
+                    cell.style.color = '#fff';
+                    cell.style.fontWeight = '700';
+                    cell.innerHTML = '<i class="fas fa-check"></i>';
+                } else if (cell.style.background === 'rgb(100, 66, 140)') {
+                    // Era a posição anterior, restaurar
+                    cell.style.background = '';
+                    cell.style.color = '';
+                    cell.style.fontWeight = '';
+                    cell.innerHTML = '<span class="text-muted">—</span>';
+                }
+            });
+        });
+    })();
+    </script>
 
 <?php
 // ── Listagem ────────────────────────────────────────────────────────
@@ -206,7 +321,7 @@ else:
                             <th style="width:60px">Logo</th>
                             <th>Nome</th>
                             <th>Site</th>
-                            <th>Ordem</th>
+                            <th>Posição</th>
                             <th>Status</th>
                             <th class="actions-col">Ações</th>
                         </tr>
@@ -225,7 +340,7 @@ else:
                                     <span class="text-muted">—</span>
                                 <?php endif; ?>
                             </td>
-                            <td><?= $s['display_order'] ?></td>
+                            <td><span class="badge badge-light" style="font-size:11px;">L<?= $s['grid_row'] ?? 1 ?>C<?= $s['grid_col'] ?? 1 ?></span></td>
                             <td>
                                 <span class="badge <?= $s['is_visible'] ? 'badge-visible' : 'badge-hidden' ?>">
                                     <?= $s['is_visible'] ? 'Visível' : 'Oculto' ?>

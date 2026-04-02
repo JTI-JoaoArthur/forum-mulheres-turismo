@@ -3,6 +3,8 @@
  * Database — Wrapper SQLite via PDO
  */
 
+date_default_timezone_set('America/Sao_Paulo');
+
 class Database
 {
     private static ?PDO $instance = null;
@@ -29,6 +31,8 @@ class Database
 
             if ($isNew) {
                 self::migrate();
+            } else {
+                self::applyAlterMigrations();
             }
         }
 
@@ -39,6 +43,39 @@ class Database
     {
         $schema = file_get_contents(__DIR__ . '/../sql/schema.sql');
         self::$instance->exec($schema);
+    }
+
+    private static function applyAlterMigrations(): void
+    {
+        $migrations = [
+            ['news', 'is_pinned', 'ALTER TABLE news ADD COLUMN is_pinned INTEGER DEFAULT 0'],
+            ['news', 'carousel_order', 'ALTER TABLE news ADD COLUMN carousel_order INTEGER DEFAULT 0'],
+            ['carousel', 'is_in_gallery', 'ALTER TABLE carousel ADD COLUMN is_in_gallery INTEGER DEFAULT 0'],
+            ['carousel', 'video_path', 'ALTER TABLE carousel ADD COLUMN video_path TEXT'],
+            ['news', 'video_path', 'ALTER TABLE news ADD COLUMN video_path TEXT'],
+        ];
+        foreach ($migrations as [$table, $column, $sql]) {
+            $cols = self::$instance->query("PRAGMA table_info({$table})")->fetchAll();
+            $exists = false;
+            foreach ($cols as $c) {
+                if ($c['name'] === $column) { $exists = true; break; }
+            }
+            if (!$exists) {
+                self::$instance->exec($sql);
+            }
+        }
+
+        // Inserir hero como slide personalizado (uma vez)
+        $heroMigrated = self::fetchOne("SELECT value FROM settings WHERE key = 'hero_migrated'");
+        if (!$heroMigrated) {
+            self::query(
+                "INSERT INTO carousel (image, is_in_gallery, is_visible, display_order, is_pinned) VALUES (?, 1, 1, 1, 1)",
+                ['assets/img/destaque/save-the-date-forum.jpg']
+            );
+            self::query(
+                "INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES ('hero_migrated', '1', datetime('now', 'localtime'))"
+            );
+        }
     }
 
     /**

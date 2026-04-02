@@ -23,13 +23,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($postAction === 'save') {
         $data = [
             'day'           => (int) ($_POST['day'] ?? 1),
-            'start_time'    => trim($_POST['start_time'] ?? ''),
-            'end_time'      => trim($_POST['end_time'] ?? ''),
+            'start_time'    => str_pad(trim($_POST['start_time'] ?? ''), 5, ':00'),
+            'end_time'      => str_pad(trim($_POST['end_time'] ?? ''), 5, ':00'),
             'title'         => trim($_POST['title'] ?? ''),
             'location'      => trim($_POST['location'] ?? ''),
             'description'   => trim($_POST['description'] ?? ''),
             'display_order' => (int) ($_POST['display_order'] ?? 0),
-            'is_visible'    => isset($_POST['is_visible']) ? 1 : 0,
         ];
 
         $errors = [];
@@ -43,9 +42,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 Database::update('schedule', $data, 'id = ?', [$id]);
                 Auth::log(Auth::user()['id'], 'schedule_updated', "Item #{$id}: {$data['title']}");
             } else {
-                $newId = Database::insert('schedule', $data);
-                Auth::log(Auth::user()['id'], 'schedule_created', "Item #{$newId}: {$data['title']}");
+                $id = Database::insert('schedule', $data);
+                Auth::log(Auth::user()['id'], 'schedule_created', "Item #{$id}: {$data['title']}");
             }
+
+            // Salvar vínculos com palestrantes
+            Database::delete('schedule_speakers', 'schedule_id = ?', [$id]);
+            $speakerIds = $_POST['speakers'] ?? [];
+            foreach ($speakerIds as $spId) {
+                $spId = (int) $spId;
+                if ($spId > 0) {
+                    Database::insert('schedule_speakers', [
+                        'schedule_id' => $id,
+                        'speaker_id'  => $spId,
+                    ]);
+                }
+            }
+
             $_SESSION['flash_message'] = 'Item da programação salvo com sucesso.';
             $_SESSION['flash_type'] = 'success';
             header('Location: /admin/schedule.php');
@@ -69,14 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    if ($postAction === 'toggle' && $id > 0) {
-        $item = Database::fetchOne("SELECT is_visible FROM schedule WHERE id = ?", [$id]);
-        if ($item) {
-            Database::query("UPDATE schedule SET is_visible = ? WHERE id = ?", [$item['is_visible'] ? 0 : 1, $id]);
-        }
-        header('Location: /admin/schedule.php');
-        exit;
-    }
+    /* toggle de visibilidade removido */
 }
 
 require __DIR__ . '/templates/header.php';
@@ -90,6 +96,12 @@ if ($message): ?>
 
 if ($action === 'form'):
     $item = $id ? Database::fetchOne("SELECT * FROM schedule WHERE id = ?", [$id]) : null;
+    $allSpeakers = Database::fetchAll("SELECT id, name, position, institution FROM speakers WHERE is_visible = 1 ORDER BY name ASC");
+    $linkedSpeakerIds = [];
+    if ($id) {
+        $links = Database::fetchAll("SELECT speaker_id FROM schedule_speakers WHERE schedule_id = ?", [$id]);
+        foreach ($links as $l) $linkedSpeakerIds[] = (int) $l['speaker_id'];
+    }
 ?>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><?= $item ? 'Editar' : 'Novo' ?> Item da Programação</h2>
@@ -114,8 +126,8 @@ if ($action === 'form'):
                         <div class="form-group mb-3">
                             <label for="day">Dia *</label>
                             <select class="form-control" id="day" name="day" required>
-                                <option value="1" <?= ($item['day'] ?? 1) == 1 ? 'selected' : '' ?>>Dia 1 — 3 de Junho</option>
-                                <option value="2" <?= ($item['day'] ?? '') == 2 ? 'selected' : '' ?>>Dia 2 — 4 de Junho</option>
+                                <option value="1" <?= ($item['day'] ?? 1) == 1 ? 'selected' : '' ?>>3 de Junho</option>
+                                <option value="2" <?= ($item['day'] ?? '') == 2 ? 'selected' : '' ?>>4 de Junho</option>
                             </select>
                         </div>
                     </div>
@@ -132,15 +144,17 @@ if ($action === 'form'):
                     <div class="col-md-3">
                         <div class="form-group mb-3">
                             <label for="start_time">Início *</label>
-                            <input type="time" class="form-control" id="start_time" name="start_time"
-                                   value="<?= htmlspecialchars($item['start_time'] ?? '') ?>" required>
+                            <input type="text" class="form-control time-input" id="start_time" name="start_time"
+                                   value="<?= htmlspecialchars($item['start_time'] ?? '') ?>" required
+                                   placeholder="HH:MM" maxlength="5" inputmode="numeric" autocomplete="off">
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group mb-3">
                             <label for="end_time">Fim *</label>
-                            <input type="time" class="form-control" id="end_time" name="end_time"
-                                   value="<?= htmlspecialchars($item['end_time'] ?? '') ?>" required>
+                            <input type="text" class="form-control time-input" id="end_time" name="end_time"
+                                   value="<?= htmlspecialchars($item['end_time'] ?? '') ?>" required
+                                   placeholder="HH:MM" maxlength="5" inputmode="numeric" autocomplete="off">
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -150,13 +164,6 @@ if ($action === 'form'):
                                    value="<?= $item['display_order'] ?? 0 ?>" min="0">
                         </div>
                     </div>
-                    <div class="col-md-3 d-flex align-items-center">
-                        <div class="form-check mt-3">
-                            <input type="checkbox" class="form-check-input" id="is_visible" name="is_visible" value="1"
-                                   <?= ($item['is_visible'] ?? 1) ? 'checked' : '' ?>>
-                            <label class="form-check-label" for="is_visible">Visível no site</label>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="form-group mb-3">
@@ -164,6 +171,29 @@ if ($action === 'form'):
                     <textarea class="form-control" id="description" name="description" rows="3"
                               maxlength="200"><?= htmlspecialchars($item['description'] ?? '') ?></textarea>
                 </div>
+
+                <?php if (!empty($allSpeakers)): ?>
+                <div class="form-group mb-3">
+                    <label><i class="fas fa-user-tie"></i> Palestrantes vinculados</label>
+                    <div class="row">
+                        <?php foreach ($allSpeakers as $sp): ?>
+                        <div class="col-md-4 col-sm-6">
+                            <div class="form-check mb-2">
+                                <input type="checkbox" class="form-check-input" name="speakers[]"
+                                       value="<?= $sp['id'] ?>" id="sp_<?= $sp['id'] ?>"
+                                       <?= in_array($sp['id'], $linkedSpeakerIds) ? 'checked' : '' ?>>
+                                <label class="form-check-label" for="sp_<?= $sp['id'] ?>">
+                                    <?= htmlspecialchars($sp['name']) ?>
+                                    <?php if ($sp['position'] || $sp['institution']): ?>
+                                    <br><small class="text-muted"><?= htmlspecialchars(($sp['position'] ?: '') . ($sp['institution'] ? ' / ' . $sp['institution'] : '')) ?></small>
+                                    <?php endif; ?>
+                                </label>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
 
                 <hr>
                 <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Salvar</button>
@@ -192,7 +222,7 @@ if ($action === 'form'):
             <?php else: ?>
                 <table class="table table-hover mb-0">
                     <thead>
-                        <tr><th>Horário</th><th>Título</th><th>Local</th><th>Status</th><th class="actions-col">Ações</th></tr>
+                        <tr><th>Horário</th><th>Título</th><th>Local</th><th class="actions-col">Ações</th></tr>
                     </thead>
                     <tbody>
                     <?php foreach ($items as $s): ?>
@@ -200,13 +230,8 @@ if ($action === 'form'):
                             <td><?= htmlspecialchars($s['start_time']) ?> — <?= htmlspecialchars($s['end_time']) ?></td>
                             <td><strong><?= htmlspecialchars($s['title']) ?></strong></td>
                             <td><?= htmlspecialchars($s['location'] ?: '-') ?></td>
-                            <td><span class="badge <?= $s['is_visible'] ? 'badge-visible' : 'badge-hidden' ?>"><?= $s['is_visible'] ? 'Visível' : 'Oculto' ?></span></td>
                             <td class="actions-col">
                                 <a href="/admin/schedule.php?action=form&id=<?= $s['id'] ?>" class="btn btn-outline-primary btn-action"><i class="fas fa-edit"></i></a>
-                                <form method="post" action="/admin/schedule.php?id=<?= $s['id'] ?>" class="d-inline">
-                                    <?= CSRF::field() ?><input type="hidden" name="action" value="toggle">
-                                    <button type="submit" class="btn btn-outline-secondary btn-action"><i class="fas fa-<?= $s['is_visible'] ? 'eye-slash' : 'eye' ?>"></i></button>
-                                </form>
                                 <form method="post" action="/admin/schedule.php?id=<?= $s['id'] ?>" class="d-inline">
                                     <?= CSRF::field() ?><input type="hidden" name="action" value="delete">
                                     <button type="submit" class="btn btn-outline-danger btn-action" data-confirm="Excluir este item?"><i class="fas fa-trash"></i></button>

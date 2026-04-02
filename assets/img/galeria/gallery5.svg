@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540">
+  <defs>
+    <linearGradient id="g5" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6b4595"/>
+      <stop offset="100%" stop-color="#4a2d6a"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="url(#g5)"/>
+  <!-- Pódio -->
+  <rect x="380" y="280" width="80" height="90" rx="4" fill="rgba(255,255,255,0.10)"/>
+  <rect x="310" y="310" width="80" height="60" rx="4" fill="rgba(255,255,255,0.07)"/>
+  <rect x="450" y="320" width="80" height="50" rx="4" fill="rgba(255,255,255,0.07)"/>
+  <!-- Estrelas / Conquistas -->
+  <polygon points="420,250 425,262 438,262 428,270 432,282 420,274 408,282 412,270 402,262 415,262" fill="rgba(255,255,255,0.14)"/>
+  <polygon points="350,275 354,284 363,284 356,290 358,298 350,293 342,298 344,290 337,284 346,284" fill="rgba(255,255,255,0.08)"/>
+  <polygon points="490,280 494,288 502,288 496,293 498,300 490,296 482,300 484,293 478,288 486,288" fill="rgba(255,255,255,0.08)"/>
+  <!-- Pessoas no pódio -->
+  <circle cx="420" cy="255" r="0" fill="none"/>
+  <circle cx="350" cy="290" r="0" fill="none"/>
+  <text x="480" y="440" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="600" fill="rgba(255,255,255,0.18)" letter-spacing="4">RESULTADOS</text>
+</svg>

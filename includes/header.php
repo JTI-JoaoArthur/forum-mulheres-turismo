@@ -2,10 +2,10 @@
 <header>
     <div class="header-area header-custom">
         <div class="container-fluid">
-            <div class="row align-items-center justify-content-between flex-nowrap" style="height: 80px;">
+            <div class="row align-items-center justify-content-between flex-nowrap header-row">
                 <div class="col-auto d-flex align-items-center">
                     <div class="logo">
-                        <a href="index.php"><img src="assets/img/logos/ONU-Turismo.png" alt="ONU Turismo"></a>
+                        <a href="https://www.untourism.int/" target="_blank" rel="noopener"><img src="assets/img/logos/ONU-Turismo.png" alt="ONU Turismo"></a>
                     </div>
                 </div>
                 <div class="col d-none d-lg-flex align-items-center justify-content-center">
@@ -24,7 +24,7 @@
                 </div>
                 <div class="col-auto d-flex align-items-center">
                     <div class="logo right-logo">
-                        <a href="index.php"><img src="assets/img/logos/vertical-principal.png" alt="Ministério do Turismo"></a>
+                        <a href="https://www.gov.br/turismo/" target="_blank" rel="noopener"><img src="assets/img/logos/vertical-principal.png" alt="Ministério do Turismo"></a>
                     </div>
                 </div>
                 <div class="col-auto d-block d-lg-none mobile-menu-col">

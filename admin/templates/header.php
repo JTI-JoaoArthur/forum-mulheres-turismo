@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/css/fontawesome-all.min.css">
     <link rel="stylesheet" href="/admin/assets/css/admin.css">
+    <link href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet">
 </head>
 <body class="admin-panel">
 <nav class="navbar navbar-expand-lg navbar-dark admin-navbar">

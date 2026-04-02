@@ -60,7 +60,8 @@ if ($news) {
     <link rel="stylesheet" href="assets/css/slick.css">
     <link rel="stylesheet" href="assets/css/nice-select.css">
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/custom.min.css">
+    <link rel="stylesheet" href="assets/css/custom.min.css?v=20260401c">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" integrity="sha384-gAPqlBuTCdtVcYt9ocMOYWrnBZ4XSL6q+4eXqwNycOr4iFczhNKtnYhF3NEXJM51" crossorigin="anonymous">
 </head>
 <body>
 <?php require __DIR__ . '/includes/header.php'; ?>
@@ -73,7 +74,7 @@ if ($news) {
                      <div class="hero-cap hero-cap2 text-center">
                         <h2>Notícia</h2>
                         <nav aria-label="breadcrumb">
-                           <ol class="breadcrumb justify-content-center" style="background:transparent;">
+                           <ol class="breadcrumb justify-content-center flex-wrap" style="background:transparent;">
                               <li class="breadcrumb-item"><a href="noticias.php" style="color:#fff;">Notícias</a></li>
                               <li class="breadcrumb-item active" style="color:#ddd;">Detalhes</li>
                            </ol>
@@ -88,7 +89,7 @@ if ($news) {
       <section class="blog_area single-post-area section-padding">
          <div class="container">
             <div class="row">
-               <div class="col-lg-8 posts-list">
+               <div class="col-lg-10 col-xl-8 mx-auto posts-list">
                   <?php if (!$news): ?>
                   <div class="single-post">
                      <div class="blog_details">
@@ -116,40 +117,75 @@ if ($news) {
 
                         <?= sanitizeHtml($news['body'] ?? '') ?>
 
-                        <?php if (!empty($news['video_url'])):
+                        <?php
+                        // Montar carrossel de mídia da notícia (vídeos + galeria)
+                        $mediaItems = [];
+
+                        // Vídeo enviado (arquivo)
+                        if (!empty($news['video_path'])) {
+                            $mediaItems[] = ['type' => 'video_file', 'src' => '/' . htmlspecialchars($news['video_path'])];
+                        }
+
+                        // Vídeo externo
+                        if (!empty($news['video_url'])) {
                             $videoEmbed = '';
                             $videoThumb = '';
                             if (preg_match('#(?:youtube\.com/watch\?v=|youtu\.be/)([\w-]+)#', $news['video_url'], $m)) {
-                                $videoEmbed = 'https://www.youtube.com/embed/' . $m[1] . '?autoplay=1&rel=0';
+                                $videoEmbed = 'https://www.youtube.com/embed/' . $m[1] . '?rel=0';
                                 $videoThumb = 'https://img.youtube.com/vi/' . $m[1] . '/maxresdefault.jpg';
                             } elseif (preg_match('#vimeo\.com/(\d+)#', $news['video_url'], $m)) {
-                                $videoEmbed = 'https://player.vimeo.com/video/' . $m[1] . '?autoplay=1';
+                                $videoEmbed = 'https://player.vimeo.com/video/' . $m[1];
                             }
-                            if ($videoEmbed):
-                        ?>
-                        <div class="video-container mt-4 mb-4 text-center">
-                           <a href="<?= htmlspecialchars($videoEmbed) ?>" class="video-popup-news" style="display:inline-block;position:relative;">
-                              <?php if ($videoThumb): ?>
-                              <img class="img-fluid rounded" src="<?= htmlspecialchars($videoThumb) ?>" alt="Vídeo">
-                              <?php elseif (!empty($news['featured_image'])): ?>
-                              <img class="img-fluid rounded" src="/<?= htmlspecialchars($news['featured_image']) ?>" alt="Vídeo">
-                              <?php endif; ?>
-                              <span class="video-play-btn"><i class="fas fa-play"></i></span>
-                           </a>
-                        </div>
-                        <?php endif; endif; ?>
+                            if ($videoEmbed) {
+                                $mediaItems[] = ['type' => 'video_embed', 'src' => $videoEmbed, 'thumb' => $videoThumb];
+                            }
+                        }
 
-                        <?php if (!empty($gallery)): ?>
-                        <div class="blog-gallery mt-4 mb-4">
-                           <div class="row">
-                              <?php foreach ($gallery as $gi): ?>
-                              <div class="col-md-6 mb-3">
-                                 <a href="/<?= htmlspecialchars($gi['image']) ?>" class="popup-gallery" title="Galeria">
-                                    <img class="img-fluid rounded" src="/<?= htmlspecialchars($gi['image']) ?>" alt="Galeria">
-                                 </a>
+                        // Galeria de imagens
+                        foreach ($gallery as $gi) {
+                            $mediaItems[] = ['type' => 'image', 'src' => '/' . htmlspecialchars($gi['image'])];
+                        }
+
+                        if (!empty($mediaItems)):
+                        ?>
+                        <div class="news-media-carousel mt-4 mb-4">
+                           <?php if (count($mediaItems) > 1): ?>
+                           <div class="swiper newsMediaSwiper">
+                              <div class="swiper-wrapper">
+                                 <?php foreach ($mediaItems as $mi): ?>
+                                 <div class="swiper-slide">
+                                    <?php if ($mi['type'] === 'video_file'): ?>
+                                    <video controls preload="metadata" class="news-video-player">
+                                       <source src="<?= $mi['src'] ?>" type="video/<?= pathinfo($mi['src'], PATHINFO_EXTENSION) ?>">
+                                    </video>
+                                    <?php elseif ($mi['type'] === 'video_embed'): ?>
+                                    <div style="position:relative;padding-bottom:56.25%;height:0;">
+                                       <iframe src="<?= htmlspecialchars($mi['src']) ?>" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="encrypted-media; picture-in-picture" allowfullscreen title="Vídeo — <?= $title ?>"></iframe>
+                                    </div>
+                                    <?php else: ?>
+                                    <a href="<?= $mi['src'] ?>" class="popup-gallery"><img class="img-fluid rounded" src="<?= $mi['src'] ?>" alt="Foto da galeria — <?= $title ?>" style="width:100%"></a>
+                                    <?php endif; ?>
+                                 </div>
+                                 <?php endforeach; ?>
                               </div>
-                              <?php endforeach; ?>
+                              <div class="swiper-button-next" style="color:#64428c" aria-label="Próxima mídia"></div>
+                              <div class="swiper-button-prev" style="color:#64428c" aria-label="Mídia anterior"></div>
+                              <div class="swiper-pagination"></div>
                            </div>
+                           <?php else:
+                              $mi = $mediaItems[0];
+                              if ($mi['type'] === 'video_file'): ?>
+                           <video controls preload="metadata" class="news-video-player" style="border-radius:4px;">
+                              <source src="<?= $mi['src'] ?>" type="video/<?= pathinfo($mi['src'], PATHINFO_EXTENSION) ?>">
+                           </video>
+                           <?php elseif ($mi['type'] === 'video_embed'): ?>
+                           <div style="position:relative;padding-bottom:56.25%;height:0;">
+                              <iframe src="<?= htmlspecialchars($mi['src']) ?>" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>
+                           </div>
+                           <?php else: ?>
+                           <a href="<?= $mi['src'] ?>" class="popup-gallery"><img class="img-fluid rounded" src="<?= $mi['src'] ?>" alt="Foto da galeria — <?= $title ?>"></a>
+                           <?php endif;
+                           endif; ?>
                         </div>
                         <?php endif; ?>
                      </div>
@@ -157,43 +193,36 @@ if ($news) {
                   <div class="navigation-top">
                      <div class="d-sm-flex justify-content-between text-center">
                         <ul class="social-icons">
-                           <li><a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode('https://forumdeturismo.gov.br/noticia.php?slug=' . $slug) ?>" target="_blank" rel="noopener" title="Compartilhar no Facebook"><i class="fab fa-facebook-f"></i></a></li>
-                           <li><a href="https://twitter.com/intent/tweet?url=<?= urlencode('https://forumdeturismo.gov.br/noticia.php?slug=' . $slug) ?>&text=<?= urlencode($news['title']) ?>" target="_blank" rel="noopener" title="Compartilhar no X"><i class="icon-x"></i></a></li>
-                           <li><a href="https://www.linkedin.com/sharing/share-offsite/?url=<?= urlencode('https://forumdeturismo.gov.br/noticia.php?slug=' . $slug) ?>" target="_blank" rel="noopener" title="Compartilhar no LinkedIn"><i class="fab fa-linkedin"></i></a></li>
-                           <li><a href="https://api.whatsapp.com/send?text=<?= urlencode($news['title'] . ' - https://forumdeturismo.gov.br/noticia.php?slug=' . $slug) ?>" target="_blank" rel="noopener" title="Compartilhar no WhatsApp"><i class="fab fa-whatsapp"></i></a></li>
+                           <li><a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode('https://forumdeturismo.gov.br/noticia.php?slug=' . $slug) ?>" target="_blank" rel="noopener" title="Compartilhar no Facebook" aria-label="Compartilhar no Facebook"><i class="fab fa-facebook-f"></i></a></li>
+                           <li><a href="https://twitter.com/intent/tweet?url=<?= urlencode('https://forumdeturismo.gov.br/noticia.php?slug=' . $slug) ?>&text=<?= urlencode($news['title']) ?>" target="_blank" rel="noopener" title="Compartilhar no X" aria-label="Compartilhar no X"><i class="icon-x"></i></a></li>
+                           <li><a href="https://www.linkedin.com/sharing/share-offsite/?url=<?= urlencode('https://forumdeturismo.gov.br/noticia.php?slug=' . $slug) ?>" target="_blank" rel="noopener" title="Compartilhar no LinkedIn" aria-label="Compartilhar no LinkedIn"><i class="fab fa-linkedin"></i></a></li>
+                           <li><a href="https://api.whatsapp.com/send?text=<?= urlencode($news['title'] . ' - https://forumdeturismo.gov.br/noticia.php?slug=' . $slug) ?>" target="_blank" rel="noopener" title="Compartilhar no WhatsApp" aria-label="Compartilhar no WhatsApp"><i class="fab fa-whatsapp"></i></a></li>
                         </ul>
                      </div>
                   </div>
                   <?php endif; ?>
-               </div>
-               <div class="col-lg-4">
-                  <div class="blog_right_sidebar">
-                     <aside class="single_sidebar_widget instagram_feeds">
-                        <h4 class="widget_title" style="color: #64428c;">Instagram</h4>
-                        <p class="text-center mb-3">
-                           <?php if (siteRaw('social_instagram')): ?>
-                           <a href="<?= site('social_instagram') ?>" target="_blank" style="color: #64428c; font-weight: 600;">
-                              <i class="fab fa-instagram"></i> Siga @mturismo
-                           </a>
-                           <?php endif; ?>
-                        </p>
-                     </aside>
-                  </div>
                </div>
             </div>
          </div>
       </section>
    </main>
 <?php require __DIR__ . '/includes/footer.php'; ?>
+   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" integrity="sha384-2UI1PfnXFjVMQ7/ZDEF70CR943oH3v6uZrFQGGqJYlvhh4g6z6uVktxYbOlAczav" crossorigin="anonymous"></script>
    <script>
       $('.popup-gallery').magnificPopup({
          type: 'image',
          gallery: { enabled: true },
          zoom: { enabled: true, duration: 300 }
       });
-      $('.video-popup-news').magnificPopup({
-         type: 'iframe'
-      });
+      if (document.querySelector('.newsMediaSwiper')) {
+         new Swiper('.newsMediaSwiper', {
+            slidesPerView: 1,
+            spaceBetween: 10,
+            loop: false,
+            navigation: { nextEl: '.newsMediaSwiper .swiper-button-next', prevEl: '.newsMediaSwiper .swiper-button-prev' },
+            pagination: { el: '.newsMediaSwiper .swiper-pagination', clickable: true }
+         });
+      }
    </script>
 </body>
 </html>

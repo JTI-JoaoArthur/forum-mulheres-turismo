@@ -57,6 +57,15 @@ CREATE TABLE IF NOT EXISTS schedule (
     updated_at TEXT DEFAULT (datetime('now', 'localtime'))
 );
 
+-- Vínculo Palestrantes ↔ Programação (N:N)
+CREATE TABLE IF NOT EXISTS schedule_speakers (
+    schedule_id INTEGER NOT NULL,
+    speaker_id INTEGER NOT NULL,
+    PRIMARY KEY (schedule_id, speaker_id),
+    FOREIGN KEY (schedule_id) REFERENCES schedule(id) ON DELETE CASCADE,
+    FOREIGN KEY (speaker_id) REFERENCES speakers(id) ON DELETE CASCADE
+);
+
 -- Notícias
 CREATE TABLE IF NOT EXISTS news (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -66,9 +75,12 @@ CREATE TABLE IF NOT EXISTS news (
     body TEXT,
     author TEXT,
     video_url TEXT,
+    video_path TEXT,
     featured_image TEXT,
     published_at TEXT NOT NULL,
     is_featured INTEGER DEFAULT 0,
+    is_pinned INTEGER DEFAULT 0,
+    carousel_order INTEGER DEFAULT 0,
     is_in_gallery INTEGER DEFAULT 1,
     is_visible INTEGER DEFAULT 1,
     created_at TEXT DEFAULT (datetime('now', 'localtime')),
@@ -84,14 +96,16 @@ CREATE TABLE IF NOT EXISTS news_gallery (
     FOREIGN KEY (news_id) REFERENCES news(id) ON DELETE CASCADE
 );
 
--- Slides manuais do carrossel
+-- Slides do carrossel (personalizados)
 CREATE TABLE IF NOT EXISTS carousel (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    image TEXT NOT NULL,
+    image TEXT,
     link TEXT,
     video_url TEXT,
+    video_path TEXT,
     display_order INTEGER DEFAULT 0,
     is_pinned INTEGER DEFAULT 0,
+    is_in_gallery INTEGER DEFAULT 0,
     is_visible INTEGER DEFAULT 1,
     created_at TEXT DEFAULT (datetime('now', 'localtime')),
     updated_at TEXT DEFAULT (datetime('now', 'localtime'))
@@ -114,6 +128,8 @@ CREATE TABLE IF NOT EXISTS sponsors (
     website TEXT,
     category TEXT NOT NULL CHECK(category IN ('apoio', 'realizacao')),
     display_order INTEGER DEFAULT 0,
+    grid_row INTEGER DEFAULT 1,
+    grid_col INTEGER DEFAULT 1,
     is_visible INTEGER DEFAULT 1,
     created_at TEXT DEFAULT (datetime('now', 'localtime')),
     updated_at TEXT DEFAULT (datetime('now', 'localtime'))

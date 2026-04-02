@@ -32,7 +32,7 @@ require_once __DIR__ . '/includes/site.php';
     <link rel="stylesheet" href="assets/css/slick.css">
     <link rel="stylesheet" href="assets/css/nice-select.css">
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/custom.min.css">
+    <link rel="stylesheet" href="assets/css/custom.min.css?v=20260401c">
 </head>
 <body>
 <?php require __DIR__ . '/includes/header.php'; ?>
@@ -67,25 +67,25 @@ require_once __DIR__ . '/includes/site.php';
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label for="message" class="sr-only">Sua mensagem</label>
-                                        <textarea class="form-control w-100" name="message" id="message" cols="30" rows="9" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Sua mensagem'" placeholder=" Sua mensagem" maxlength="5000" aria-required="true"></textarea>
+                                        <textarea class="form-control w-100" name="message" id="message" cols="30" rows="9" placeholder="Sua mensagem" maxlength="5000" aria-required="true"></textarea>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label for="name" class="sr-only">Seu nome</label>
-                                        <input class="form-control valid" name="name" id="name" type="text" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Seu nome'" placeholder="Seu nome" maxlength="100" aria-required="true">
+                                        <input class="form-control valid" name="name" id="name" type="text" placeholder="Seu nome" maxlength="100" aria-required="true">
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label for="email" class="sr-only">Seu e-mail</label>
-                                        <input class="form-control valid" name="email" id="email" type="email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Seu e-mail'" placeholder="Seu e-mail" maxlength="254" aria-required="true">
+                                        <input class="form-control valid" name="email" id="email" type="email" placeholder="Seu e-mail" maxlength="254" aria-required="true">
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label for="subject" class="sr-only">Assunto</label>
-                                        <input class="form-control" name="subject" id="subject" type="text" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Assunto'" placeholder="Assunto" maxlength="200" aria-required="true">
+                                        <input class="form-control" name="subject" id="subject" type="text" placeholder="Assunto" maxlength="200" aria-required="true">
                                     </div>
                                 </div>
                             </div>
@@ -95,13 +95,13 @@ require_once __DIR__ . '/includes/site.php';
                         </form>
                     </div>
                     <div class="col-lg-3 offset-lg-1">
-                        <div class="media contact-info">
+                        <a href="#mapa" class="media contact-info" style="text-decoration:none;color:inherit;">
                             <span class="contact-info__icon"><i class="ti-home"></i></span>
                             <div class="media-body">
                                 <h3><?= site('contact_city') ?></h3>
                                 <p><?= site('contact_venue') ?></p>
                             </div>
-                        </div>
+                        </a>
                         <div class="media contact-info">
                             <span class="contact-info__icon"><i class="ti-tablet"></i></span>
                             <div class="media-body">
@@ -119,16 +119,15 @@ require_once __DIR__ . '/includes/site.php';
                     </div>
                 </div>
                 <div id="mapa" class="mt-5 pt-4">
-                    <iframe
-                        src="https://www.google.com/maps?q=<?= site('maps_query') ?>&output=embed"
-                        class="w-100"
-                        height="480"
-                        style="border:0;"
-                        allowfullscreen=""
-                        loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade"
-                        title="Mapa do <?= site('contact_venue') ?>">
-                    </iframe>
+                    <div class="mapa-responsivo">
+                        <iframe
+                            src="https://www.google.com/maps?q=<?= site('maps_query') ?>&output=embed"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="Mapa do <?= site('contact_venue') ?>">
+                        </iframe>
+                    </div>
                 </div>
             </div>
         </section>

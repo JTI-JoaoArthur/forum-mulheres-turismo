@@ -1,8 +1,9 @@
 <?php
 require_once __DIR__ . '/includes/site.php';
+require_once __DIR__ . '/includes/instagram.php';
 
 $page = max(1, (int) ($_GET['p'] ?? 1));
-$perPage = 6;
+$perPage = 10;
 $offset = ($page - 1) * $perPage;
 
 $allNews = [];
@@ -17,6 +18,7 @@ if (dbReady()) {
 $totalPages = max(1, (int) ceil($total / $perPage));
 
 $mesesPt = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+$instagramPosts = getInstagramFeed(6);
 ?>
 <!doctype html>
 <html class="no-js" lang="pt-BR">
@@ -49,7 +51,7 @@ $mesesPt = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','D
     <link rel="stylesheet" href="assets/css/slick.css">
     <link rel="stylesheet" href="assets/css/nice-select.css">
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/custom.min.css">
+    <link rel="stylesheet" href="assets/css/custom.min.css?v=20260401c">
 </head>
 <body>
 <?php require __DIR__ . '/includes/header.php'; ?>
@@ -76,7 +78,7 @@ $mesesPt = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','D
                             <?php if (empty($allNews)): ?>
                             <article class="blog_item blog-item blog-default">
                                 <div class="blog_item_img">
-                                    <img class="card-img rounded-0" src="assets/img/galeria/home-blog1.png" alt="Imagem de destaque da notícia">
+                                    <img class="card-img rounded-0 img-fluid" src="assets/img/galeria/news-placeholder.svg" alt="Imagem de destaque da notícia">
                                     <a href="#" class="blog_item_date"><h3>00</h3><p>Mês</p></a>
                                 </div>
                                 <div class="blog_details">
@@ -93,9 +95,9 @@ $mesesPt = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','D
                                 <article class="blog_item">
                                     <div class="blog_item_img">
                                         <?php if ($n['featured_image']): ?>
-                                            <img class="card-img rounded-0" src="/<?= htmlspecialchars($n['featured_image']) ?>" alt="<?= htmlspecialchars($n['title']) ?>">
+                                            <img class="card-img rounded-0 img-fluid" src="/<?= htmlspecialchars($n['featured_image']) ?>" alt="<?= htmlspecialchars($n['title']) ?>">
                                         <?php else: ?>
-                                            <img class="card-img rounded-0" src="assets/img/galeria/home-blog1.png" alt="<?= htmlspecialchars($n['title']) ?>">
+                                            <img class="card-img rounded-0 img-fluid" src="assets/img/galeria/news-placeholder.svg" alt="<?= htmlspecialchars($n['title']) ?>">
                                         <?php endif; ?>
                                         <a href="noticia.php?slug=<?= htmlspecialchars($n['slug']) ?>" class="blog_item_date">
                                             <h3><?= $dia ?></h3>
@@ -139,13 +141,28 @@ $mesesPt = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','D
                         <div class="blog_right_sidebar">
                             <aside class="single_sidebar_widget instagram_feeds">
                                 <h4 class="widget_title" style="color: #64428c;">Instagram</h4>
-                                <p class="text-center mb-3">
-                                    <?php if (siteRaw('social_instagram')): ?>
-                                    <a href="<?= site('social_instagram') ?>" target="_blank" style="color: #64428c; font-weight: 600;">
-                                        <i class="fab fa-instagram"></i> Siga @mturismo
+                                <?php if (!empty($instagramPosts)): ?>
+                                <ul class="instagram_imgs">
+                                    <?php foreach ($instagramPosts as $post):
+                                        $imgUrl = ($post['media_type'] === 'VIDEO' && !empty($post['thumbnail_url']))
+                                            ? $post['thumbnail_url']
+                                            : $post['media_url'];
+                                    ?>
+                                    <li>
+                                        <a href="<?= htmlspecialchars($post['permalink']) ?>" target="_blank" rel="noopener">
+                                            <img src="<?= htmlspecialchars($imgUrl) ?>" alt="Post do Instagram" loading="lazy">
+                                        </a>
+                                    </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                                <?php endif; ?>
+                                <?php if (siteRaw('social_instagram')): ?>
+                                <p class="text-center mt-3">
+                                    <a href="<?= site('social_instagram') ?>" target="_blank" rel="noopener" style="color: #64428c; font-weight: 600;">
+                                        <i class="fab fa-instagram"></i> Siga no Instagram
                                     </a>
-                                    <?php endif; ?>
                                 </p>
+                                <?php endif; ?>
                             </aside>
                         </div>
                     </div>

@@ -25,19 +25,21 @@ if ($userCount === 0) {
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    CSRF::require();
+    if (!CSRF::validate($_POST['_token'] ?? '')) {
+        $error = 'Sessão expirada. Tente novamente.';
+    } else {
+        $email    = trim($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
 
-    $email    = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
+        $result = Auth::attempt($email, $password);
 
-    $result = Auth::attempt($email, $password);
+        if ($result['success']) {
+            header('Location: /admin/dashboard.php');
+            exit;
+        }
 
-    if ($result['success']) {
-        header('Location: /admin/dashboard.php');
-        exit;
+        $error = $result['message'];
     }
-
-    $error = $result['message'];
 }
 ?>
 <!DOCTYPE html>

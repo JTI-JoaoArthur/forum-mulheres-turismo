@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540">
+  <defs>
+    <linearGradient id="g4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8b6aaf"/>
+      <stop offset="100%" stop-color="#64428c"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="url(#g4)"/>
+  <!-- Paisagem (turismo) -->
+  <!-- Montanhas -->
+  <polygon points="200,350 380,180 560,350" fill="rgba(255,255,255,0.06)"/>
+  <polygon points="400,350 550,210 700,350" fill="rgba(255,255,255,0.08)"/>
+  <!-- Sol -->
+  <circle cx="700" cy="150" r="35" fill="rgba(255,255,255,0.08)"/>
+  <!-- Avião -->
+  <path d="M280 130 L310 125 L300 135 Z" fill="rgba(255,255,255,0.12)"/>
+  <line x1="240" y1="138" x2="280" y2="130" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" stroke-dasharray="4,4"/>
+  <!-- Água -->
+  <rect x="100" y="350" width="760" height="80" rx="0" fill="rgba(255,255,255,0.03)"/>
+  <path d="M100 370 Q200 360 300 370 Q400 380 500 370 Q600 360 700 370 Q800 380 860 370" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1.5"/>
+  <text x="480" y="470" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="600" fill="rgba(255,255,255,0.18)" letter-spacing="4">TURISMO</text>
+</svg>

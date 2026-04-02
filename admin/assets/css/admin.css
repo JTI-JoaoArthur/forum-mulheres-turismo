@@ -151,3 +151,28 @@
         font-size: 22px;
     }
 }
+
+/* --- Editor de texto rico (Quill) --- */
+#editor-toolbar {
+    border: 1px solid #ced4da;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    background: #f8f9fa;
+}
+#editor-container {
+    border: 1px solid #ced4da;
+    border-radius: 0 0 4px 4px;
+    font-family: "Roboto", sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+}
+#editor-container .ql-editor {
+    min-height: 250px;
+}
+.ql-toolbar.ql-snow,
+.ql-container.ql-snow {
+    border: none !important;
+}
+.ql-snow .ql-tooltip {
+    z-index: 1050;
+}

@@ -2,15 +2,16 @@
 /**
  * CSRF — Proteção contra Cross-Site Request Forgery
  *
- * Gera e valida tokens por formulário.
- * Mesmo padrão já usado no contact_process.php.
+ * Token por sessão (não single-use).
+ * Regenera apenas quando a sessão é nova ou o token não existe.
  */
 
 class CSRF
 {
+    private const TOKEN_LIFETIME = 7200; // 2 horas
+
     /**
-     * Gerar token e armazenar na sessão.
-     * Reutiliza o token existente dentro da mesma requisição (múltiplos forms).
+     * Obter token da sessão (gera se não existir).
      */
     public static function generate(): string
     {
@@ -18,20 +19,21 @@ class CSRF
             session_start();
         }
 
-        // Reutilizar token dentro da mesma requisição GET (múltiplos forms)
-        if ($_SERVER['REQUEST_METHOD'] === 'GET' && !empty($_SESSION['csrf_token'])) {
-            return $_SESSION['csrf_token'];
+        // Regenerar se não existe ou expirou
+        if (
+            empty($_SESSION['csrf_token']) ||
+            empty($_SESSION['csrf_time']) ||
+            (time() - $_SESSION['csrf_time']) > self::TOKEN_LIFETIME
+        ) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            $_SESSION['csrf_time'] = time();
         }
 
-        $token = bin2hex(random_bytes(32));
-        $_SESSION['csrf_token'] = $token;
-        $_SESSION['csrf_time'] = time();
-
-        return $token;
+        return $_SESSION['csrf_token'];
     }
 
     /**
-     * Validar token recebido (single-use, expira em 1h)
+     * Validar token recebido
      */
     public static function validate(?string $token): bool
     {
@@ -43,18 +45,15 @@ class CSRF
             return false;
         }
 
-        // Expiração: 1 hora
-        if (isset($_SESSION['csrf_time']) && (time() - $_SESSION['csrf_time']) > 3600) {
-            unset($_SESSION['csrf_token'], $_SESSION['csrf_time']);
+        // Verificar expiração
+        if (isset($_SESSION['csrf_time']) && (time() - $_SESSION['csrf_time']) > self::TOKEN_LIFETIME) {
+            // Regenerar token expirado para o próximo form
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            $_SESSION['csrf_time'] = time();
             return false;
         }
 
-        $valid = hash_equals($_SESSION['csrf_token'], $token);
-
-        // Single-use: invalidar após verificação
-        unset($_SESSION['csrf_token'], $_SESSION['csrf_time']);
-
-        return $valid;
+        return hash_equals($_SESSION['csrf_token'], $token);
     }
 
     /**
@@ -78,7 +77,9 @@ class CSRF
                 header('Content-Type: application/json; charset=utf-8');
                 echo json_encode(['error' => 'Token de segurança inválido. Recarregue a página.']);
             } else {
-                echo 'Token de segurança inválido. Recarregue a página.';
+                $_SESSION['flash_message'] = 'Token de segurança expirado. Tente novamente.';
+                $_SESSION['flash_type'] = 'warning';
+                header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/admin/'));
             }
             exit;
         }

@@ -28,3 +28,4 @@ __MACOSX
 
 # Uploads de usuários (gerados em produção)
 admin/uploads/
+.aider*

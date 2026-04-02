@@ -119,14 +119,20 @@ $newsPhotos = Database::fetchAll(
 <div class="card mb-4">
     <div class="card-header"><h6 class="mb-0"><i class="fas fa-upload"></i> Enviar Fotos</h6></div>
     <div class="card-body">
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" id="gallery-upload-form">
             <?= CSRF::field() ?>
             <input type="hidden" name="action" value="upload">
-            <div class="form-group mb-3">
-                <input type="file" class="form-control-file" name="images[]" accept="image/jpeg,image/png,image/webp" multiple required>
-                <small class="form-text text-muted">Selecione múltiplas imagens. JPG, PNG ou WebP. Máx. 5 MB cada.</small>
+            <div class="form-group mb-3" id="gal-drop-zone">
+                <input type="file" id="gal-picker" accept="image/jpeg,image/png,image/webp" multiple style="display:none">
+                <input type="file" name="images[]" id="gal-real" multiple style="position:absolute;opacity:0;pointer-events:none;width:0;height:0;">
+                <div id="gal-preview" class="row"></div>
+                <div id="gal-placeholder" class="text-center py-3" style="border:2px dashed #ccc;border-radius:8px;cursor:pointer;">
+                    <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2 d-block"></i>
+                    <span class="text-muted">Clique para selecionar imagens ou arraste aqui</span>
+                    <br><small class="text-muted">960x540 ou 1920x1080 (16:9). JPG, PNG ou WebP. Máx. 15 MB cada.</small>
+                </div>
             </div>
-            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-upload"></i> Enviar</button>
+            <button type="submit" class="btn btn-primary btn-sm" id="gal-submit-btn" style="display:none"><i class="fas fa-upload"></i> Enviar <span id="gal-count-label"></span></button>
         </form>
     </div>
 </div>
