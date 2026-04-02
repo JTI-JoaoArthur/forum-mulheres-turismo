@@ -31,6 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $email    = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
 
+        // Regenerar session ID antes do login para prevenir session fixation
+        session_regenerate_id(true);
+
         $result = Auth::attempt($email, $password);
 
         if ($result['success']) {

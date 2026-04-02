@@ -112,6 +112,8 @@ class Auth
         );
 
         if (!$user) {
+            // Dummy hash para equalizar timing e prevenir enumeração de usuários
+            password_verify($password, '$2y$12$DummyHashToEqualizeTimingXXXXXXXXXXXXXXXXXXXXXXXX');
             self::log(null, 'login_failed', "Email não encontrado: {$email}");
             return ['success' => false, 'message' => 'Credenciais inválidas.'];
         }

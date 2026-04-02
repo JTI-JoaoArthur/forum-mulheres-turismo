@@ -29,8 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['flash_type'] = 'danger';
             } else {
                 Auth::setPassword($id, $newPassword);
+                Database::query("UPDATE users SET needs_password = 1 WHERE id = ?", [$id]);
                 Auth::log(Auth::user()['id'], 'user_password_reset', "Senha redefinida para {$user['name']} (#{$id})");
-                $_SESSION['flash_message'] = "Senha de {$user['name']} redefinida com sucesso.";
+                $_SESSION['flash_message'] = "Senha de {$user['name']} redefinida. No próximo login será solicitada a troca.";
                 $_SESSION['flash_type'] = 'success';
             }
         }

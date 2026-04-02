@@ -131,8 +131,12 @@ $safeMessage = nl2br(htmlspecialchars($message, ENT_QUOTES, 'UTF-8'));
 // ── Montar e-mail ───────────────────────────────────────────────────
 $mailSubject = "Contato pelo site: " . $subject;
 
-$headers  = "From: " . $from_address . "\r\n";
-$headers .= "Reply-To: " . $email . "\r\n";
+// Sanitizar e-mail contra header injection (defesa em profundidade)
+$cleanEmail = str_replace(["\r", "\n", "%0a", "%0d"], '', $email);
+$cleanFrom  = str_replace(["\r", "\n", "%0a", "%0d"], '', $from_address);
+
+$headers  = "From: " . $cleanFrom . "\r\n";
+$headers .= "Reply-To: " . $cleanEmail . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
@@ -146,8 +150,8 @@ $body .= "<tr><td style='padding:8px;' colspan='2'><strong>Assunto:</strong> {$s
 $body .= "<tr><td style='padding:12px;border-top:1px solid #ddd;' colspan='2'>{$safeMessage}</td></tr>";
 $body .= "</table></body></html>";
 
-// ── Enviar ──────────────────────────────────────────────────────────
-$enviado = mail($to, $mailSubject, $body, $headers);
+// ── Enviar (envelope sender via -f com escapeshellarg) ──────────────
+$enviado = mail($to, $mailSubject, $body, $headers, escapeshellarg('-f' . $cleanFrom));
 
 if ($enviado) {
     echo json_encode(['status' => 'ok', 'mensagem' => 'Mensagem enviada com sucesso!']);

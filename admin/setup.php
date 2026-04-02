@@ -11,6 +11,12 @@
  * Acesse apenas uma vez: /admin/setup.php
  */
 
+// Se o setup já foi concluído (lock file), redirecionar para login
+if (file_exists(__DIR__ . '/db/.setup_complete')) {
+    header('Location: /admin/index.php');
+    exit;
+}
+
 require_once __DIR__ . '/lib/Database.php';
 require_once __DIR__ . '/lib/Auth.php';
 
@@ -79,6 +85,13 @@ Auth::createUser(
 );
 
 Auth::log(null, 'setup_completed', 'Usuários CGMK (admin) e ASCOM (editor) criados via setup');
+
+// Criar lock file para impedir re-execução do setup
+$lockDir = __DIR__ . '/db';
+if (!is_dir($lockDir)) {
+    mkdir($lockDir, 0750, true);
+}
+file_put_contents($lockDir . '/.setup_complete', date('Y-m-d H:i:s'), LOCK_EX);
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">

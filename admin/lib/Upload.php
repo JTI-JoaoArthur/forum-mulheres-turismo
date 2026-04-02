@@ -142,7 +142,15 @@ class Upload
 
         $fullPath = __DIR__ . '/../../' . $relativePath;
 
-        if (file_exists($fullPath) && str_starts_with(realpath($fullPath), realpath(self::UPLOAD_DIR))) {
+        // Verificar que é um arquivo real (não symlink/dir) e dentro do diretório de uploads
+        $realFull = realpath($fullPath);
+        $realDir  = realpath(self::UPLOAD_DIR);
+
+        if ($realFull === false || $realDir === false) {
+            return false;
+        }
+
+        if (is_file($fullPath) && str_starts_with($realFull, $realDir . DIRECTORY_SEPARATOR)) {
             return unlink($fullPath);
         }
 

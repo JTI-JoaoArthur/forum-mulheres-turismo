@@ -52,7 +52,8 @@
 
 /* Logo esquerda (ONU Turismo) */
 .header-custom .col-auto:first-child .logo img {
-    max-height: 18px !important;
+    max-height: 20px !important;
+    margin-top: -2px;
 }
 
 .header-custom #navigation {
@@ -176,6 +177,20 @@ body {
     }
     .header-custom .col-auto:first-child .logo img {
         max-height: 24px;
+    }
+}
+
+/* Header desktop: proporção maior + MTur à direita */
+@media (min-width: 992px) {
+    .header-custom .right-logo img {
+        max-height: 48px !important;
+    }
+    .header-custom .col-auto:first-child .logo img {
+        max-height: 28px !important;
+    }
+    .header-custom .col-auto:nth-child(3) {
+        display: flex !important;
+        justify-content: flex-end !important;
     }
 }
 
@@ -1779,9 +1794,9 @@ body {
         min-height: 220px;
     }
 
-    /* Countdown: tamanhos fixos legíveis */
+    /* Countdown: posição mais baixa no mobile */
     .carousel-countdown {
-        top: 50%;
+        top: 54%;
     }
     .countdown-timer {
         gap: 6px;
