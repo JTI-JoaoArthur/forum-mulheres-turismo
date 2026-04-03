@@ -1,201 +1,107 @@
-![CI](https://github.com/JTI-JoaoArthur/forum-mulheres-turismo/actions/workflows/ci.yml/badge.svg) ![PHP 8+](https://img.shields.io/badge/PHP-8.0%2B-777BB4?logo=php&logoColor=white)
+![CI](https://github.com/JTI-JoaoArthur/forum-mulheres-turismo/actions/workflows/ci.yml/badge.svg)
+![PHP 8+](https://img.shields.io/badge/PHP-8.2%2B-777BB4?logo=php&logoColor=white)
 
 # Forum de Mulheres no Turismo
 
-Site institucional do **Forum de Mulheres no Turismo** — iniciativa conjunta do Ministerio do Turismo e da ONU Turismo. Evento presencial no Centro de Convencoes de Joao Pessoa, Paraiba.
+Site institucional + painel administrativo (CMS) do Fórum de Mulheres no Turismo, evento organizado pelo Ministério do Turismo em parceria com a ONU Turismo. Centro de Convenções de João Pessoa — PB, junho de 2026.
+
+O projeto inteiro roda em PHP puro com SQLite — sem Composer, sem NPM. Vai ficar em subdomínio próprio (fora do Plone), então quanto menos dependência externa, menos dor de cabeça no deploy.
 
 ## Stack
 
-| Camada | Tecnologia |
-|--------|-----------|
-| Back-end | PHP 8+ / SQLite (PDO, WAL) |
-| Front-end | Bootstrap 4, jQuery 1.12.4, Slick, Swiper, Magnific Popup, WOW.js |
-| CMS | Painel admin proprio (`/admin`) com autenticacao, CSRF, audit log |
-| Servidor | Apache (`.htaccess`) — compativel com PHP built-in server para dev |
+- **Back-end:** PHP 8.2+, SQLite com WAL mode, PDO
+- **Front-end:** Bootstrap 4, jQuery, Slick, Swiper, Magnific Popup
+- **Servidor:** Apache + `.htaccess` (produção) / `php -S` (dev)
+- **CI:** GitHub Actions — lint PHP, scan de secrets, verificação de arquivos sensíveis
 
-## Estrutura
+## O que o site faz
+
+**Parte pública:**
+hero com carrossel (imagem e vídeo), countdown pro evento, programação com abas por dia, grid de palestrantes, notícias com detalhe por slug, álbum de fotos com rotação, apoiadores com logos e links, formulário de contato com mapa.
+
+**Painel admin (`/admin`):**
+CRUD de tudo — notícias, palestrantes, programação, carrossel, galeria, apoiadores. Upload de imagens com validação MIME real. Editor rico com sanitização HTML. Configurações gerais do site. Gestão de usuários com dois perfis (Admin tem acesso total, Editor mexe só em conteúdo). Audit log de toda ação.
+
+## Arquitetura
 
 ```
-/
-├── index.php              # Home (hero, carrossel, countdown, sobre resumo)
-├── sobre.php              # Sobre o evento + album de fotos
-├── palestrantes.php       # Grid de palestrantes
-├── programacao.php        # Programacao por dia (abas)
-├── noticias.php           # Listagem de noticias
-├── noticia.php            # Detalhe da noticia (slug)
-├── contato.php            # Formulario de contato + mapa
-├── contact_process.php    # Processamento do formulario (SMTP)
-├── csrf_token.php         # Endpoint AJAX para token CSRF
-│
-├── includes/
-│   ├── header.php         # Header unificado
-│   ├── footer.php         # Footer unificado
-│   ├── site.php           # Bootstrap: DB, helpers, sanitizacao
-│   └── album.php          # Helper do album de fotos
-│
-├── admin/
-│   ├── index.php          # Login
-│   ├── dashboard.php      # Painel principal
-│   ├── news.php           # CRUD noticias
-│   ├── speakers.php       # CRUD palestrantes
-│   ├── schedule.php       # CRUD programacao
-│   ├── carousel.php       # CRUD carrossel de destaques
-│   ├── gallery.php        # CRUD album de fotos
-│   ├── sponsors.php       # CRUD apoiadores/realizadores
-│   ├── settings.php       # Configuracoes do site
-│   ├── users.php          # Gestao de usuarios (admin)
-│   ├── setup.php          # Seed inicial de usuarios
-│   ├── change-password.php
-│   ├── recover-password.php
-│   ├── logout.php
-│   ├── lib/               # Auth, CSRF, Database, Upload
-│   ├── sql/               # Schema SQLite
-│   └── templates/         # Header/footer do admin
-│
-├── assets/
-│   ├── css/               # Bootstrap, plugins, style.css, custom.min.css
-│   ├── js/                # jQuery, plugins, main.js, custom.js
-│   └── img/
-│       ├── destaque/      # Imagens hero/destaque
-│       ├── galeria/       # Album de fotos
-│       ├── logos/         # Logos parceiros
-│       ├── elementos/     # Elementos graficos
-│       └── favicons/
-│
-├── .env.example           # Template de variaveis de ambiente
-├── .htaccess              # Rewrites, seguranca, headers
-└── CLAUDE.md              # Instrucoes para Claude Code
+PHP 8.2+ (PDO) ──► SQLite (WAL)
+     │
+     ├── /admin        CMS: Auth, CSRF, RBAC, Audit Log
+     │   └── /lib      Classes: Auth, CSRF, Database, Upload
+     │
+     ├── /includes     Bootstrap da app, helpers, sanitização
+     │
+     └── /assets       CSS, JS, imagens
 ```
 
-## Instalacao
+O banco é SQLite com WAL habilitado pra não travar em leituras concorrentes. Conteúdo nunca é deletado de verdade — tudo usa soft delete via flag `is_visible`, então dá pra reverter qualquer coisa pelo admin.
 
-### Requisitos
+Uploads ganham nomes aleatórios e passam por validação de MIME type com `finfo` (não confia só na extensão). Arquivos executáveis são barrados.
 
-- PHP 8.0+
-- Extensao PDO SQLite (`php-sqlite3`)
-- Apache com `mod_rewrite` e `mod_headers` (producao)
+## Segurança
 
-### Setup local
+Esse foi o ponto que mais demandou atenção. O site vai rodar em domínio `.gov.br`, então não dava pra deixar brecha:
+
+- **Senhas** com bcrypt (cost 12), lockout após 5 tentativas erradas (15 min de bloqueio)
+- **CSRF** com tokens de uso único, 64 bytes hex, expiração de 2h
+- **XSS** coberto por HTMLPurifier + validação de URLs contra `javascript:` e `data:`
+- **SQL injection** inexistente — 100% prepared statements via PDO
+- **Sessões** com timeout de 30 min, cookies `HttpOnly` + `SameSite=Strict` + `Secure`
+- **Headers HTTP** configurados no `.htaccess`: HSTS com preload, CSP com whitelist, X-Frame-Options DENY, nosniff, Permissions-Policy
+- **Acesso direto** a `.sqlite`, `.sql`, `/lib/`, `/data/`, `/includes/` bloqueado pelo `.htaccess`
+- **Audit log** registra login, logout, todo CRUD, tentativas falhas, alterações de senha
+
+A recuperação de senha funciona por código enviado via SMTP (já implementado, aguardando configuração do servidor de e-mail em produção).
+
+## Rodando local
 
 ```bash
-# 1. Clonar o repositorio
-git clone https://github.com/SEU_USUARIO/forum-mulheres-turismo.git
+git clone https://github.com/JTI-JoaoArthur/forum-mulheres-turismo.git
 cd forum-mulheres-turismo
 
-# 2. Configurar variaveis de ambiente
 cp .env.example .env
-# Editar .env com senhas seguras (minimo 12 caracteres)
+# preencher .env com senhas (mínimo 12 chars)
 
-# 3. Iniciar servidor de desenvolvimento
 php -S localhost:8000
 
-# 4. Acessar /admin/setup.php para criar os usuarios iniciais
-# 5. Fazer login em /admin/
+# acessar /admin/setup.php pra criar os usuários
+# depois /admin/ pra logar
 ```
 
-### Variaveis de ambiente
+O `.env.example` tem todas as variáveis documentadas. As de SMTP só são necessárias se quiser recuperação de senha funcionando.
 
-| Variavel | Descricao |
-|----------|-----------|
-| `SETUP_ADMIN_PASSWORD` | Senha do usuario admin (CGMK) — usado apenas no setup inicial |
-| `SETUP_EDITOR_PASSWORD` | Senha do usuario editor (ASCOM) — usado apenas no setup inicial |
-| `SMTP_HOST` | Servidor SMTP (necessario para recuperacao de senha) |
-| `SMTP_PORT` | Porta SMTP (ex: 587) |
-| `SMTP_USER` | Usuario SMTP |
-| `SMTP_PASSWORD` | Senha SMTP |
-| `SMTP_FROM` | E-mail remetente |
+## Deploy
 
-## Seguranca
-
-- Senhas com **bcrypt** (cost 12)
-- Tokens CSRF de uso unico (64 bytes hex, expiracao 1h)
-- Sessoes com timeout de 30 min, `httponly`, `samesite=Strict`
-- Bloqueio de conta apos 5 tentativas (lockout de 15 min)
-- Sanitizacao HTML contra Stored XSS (`sanitizeHtml()`)
-- Validacao de URLs contra `javascript:`/`data:` protocol injection
-- Upload com validacao MIME real (`finfo`), nomes aleatorios, sem extensao executavel
-- Headers HTTP: CSP, HSTS, X-Frame-Options DENY, X-Content-Type-Options, Permissions-Policy
-- `.htaccess` bloqueia acesso direto a `.sqlite`, `.sql`, `/lib/`, `/data/`, `/includes/`
-- Audit log completo (login, CRUD, alteracoes de senha, tentativas falhas)
-
-## Perfis de usuario
-
-| Perfil | Permissoes |
-|--------|-----------|
-| **Admin** (CGMK) | Acesso total: conteudo, configuracoes, gestao de usuarios, logs |
-| **Editor** (ASCOM) | Conteudo: noticias, palestrantes, programacao, carrossel, galeria, patrocinadores |
-
-## CMS
-
-O painel administrativo (`/admin`) gerencia todo o conteudo do site:
-
-- **Noticias** — CRUD com imagem, galeria, destaque para carrossel, campo autor opcional
-- **Palestrantes** — foto, cargo, instituicao, redes sociais, ordem de exibicao
-- **Programacao** — abas por dia, horario, local, descricao
-- **Carrossel** — slides manuais + automaticos (noticias em destaque), fixacao de posicao
-- **Album de fotos** — rotacao sequencial nos slots da home e pagina sobre
-- **Apoio/Realizacao** — logos de parceiros com link e ordem
-- **Configuracoes** — titulo, textos, redes sociais, dados do evento, Google Maps
-
-Todos os itens possuem acoes de editar, ocultar/exibir e excluir.
-
-## Deploy em producao
-
-### Requisitos do servidor
-
-- Apache 2.4+ com `mod_rewrite`, `mod_headers`
-- PHP 8.0+ (FPM recomendado) com `pdo_sqlite`, `mbstring`
-- HTTPS habilitado (os headers HSTS exigem)
-
-### Passo a passo
+Requisitos: Apache 2.4+ com `mod_rewrite` e `mod_headers`, PHP 8.0+ com `pdo_sqlite` e `mbstring`, HTTPS.
 
 ```bash
-# 1. Clonar e configurar
 git clone https://github.com/JTI-JoaoArthur/forum-mulheres-turismo.git /var/www/forum
-cd /var/www/forum
-cp .env.example .env
-# Editar .env com senhas seguras
+cd /var/www/forum && cp .env.example .env
 
-# 2. Permissoes
 chown -R www-data:www-data admin/data admin/uploads
 chmod 750 admin/data admin/uploads
-
-# 3. Criar banco e usuarios
-php -S localhost:9999 &
-curl http://localhost:9999/admin/setup.php
-kill %1
-
-# 4. Apache vhost
 ```
 
 ```apache
 <VirtualHost *:443>
     ServerName forumdeturismo.gov.br
     DocumentRoot /var/www/forum
-
     <Directory /var/www/forum>
         AllowOverride All
         Require all granted
     </Directory>
-
-    # PHP-FPM
     <FilesMatch \.php$>
         SetHandler "proxy:unix:/run/php/php8.2-fpm.sock|fcgi://localhost"
     </FilesMatch>
 </VirtualHost>
 ```
 
-### Backup do SQLite
-
+Backup do SQLite com cron diário:
 ```bash
-# Cron diario recomendado (SQLite nao suporta backup quente sem copia segura)
 sqlite3 /var/www/forum/admin/data/cms.sqlite ".backup '/backups/cms-$(date +%Y%m%d).sqlite'"
 ```
 
-### Integracao com Plone
+## Licença
 
-O site sera integrado ao **Plone** (CMS institucional gov.br). A estrutura HTML foi projetada para facilitar essa migracao, com areas de conteudo bem definidas e semantica limpa.
-
-## Licenca
-
-Template base: [Colorlib](https://colorlib.com/) "Event HTML-5". Manter atribuicao no footer conforme termos da licenca.
+Template base: [Colorlib](https://colorlib.com/) "Event HTML-5". Atribuição mantida no footer.
