@@ -588,7 +588,7 @@ $mesesPt = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','D
                 <div class="col-lg-5 col-md-8">
                     <div class="section-tittle section-tittle2 mb-50">
                         <h2>Apoio e Realização</h2>
-                        <p>O <?= site('site_title') ?> é uma realização do Ministério do Turismo e ONU Turismo.</p>
+                        <p>O <?= site('site_title') ?> é uma realização do Ministério do Turismo, com o apoio da ONU Turismo.</p>
                     </div>
                 </div>
                 <div class="col-lg-7">
